@@ -251,33 +251,43 @@ class WarehouseResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('province_id')
                                     ->label(__('warehouse.province_id'))
-                                    ->relationship('province', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Location\Province::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->required()
                                     ->searchable()
                                     ->preload(),
 
                                 Forms\Components\Select::make('branch_id')
-                                    ->label(__('warehouse.branch.name'))
-                                    ->relationship('branch', 'name')
+                                    ->label(__('warehouse.branch_name'))
+                                    ->options(function () {
+                                        return \App\Models\Branch::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->required()
                                     ->searchable()
                                     ->preload(),
 
                                 Forms\Components\Select::make('city_id')
                                     ->label(__('warehouse.city_id'))
-                                    ->relationship('city', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Location\City::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->searchable()
                                     ->preload(),
 
                                 Forms\Components\Select::make('town_id')
                                     ->label(__('warehouse.town_id'))
-                                    ->relationship('town', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Location\Town::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->searchable()
                                     ->preload(),
 
                                 Forms\Components\Select::make('village_id')
                                     ->label(__('warehouse.village_id'))
-                                    ->relationship('village', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Location\Village::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->searchable()
                                     ->preload(),
                             ]),
@@ -344,7 +354,6 @@ class WarehouseResource extends Resource
                                     ->numeric()
                                     ->live()
                                     ->reactive()
-                                    ->step(0.0000001)
                                     ->suffix('درجه'),
 
                                 Forms\Components\TextInput::make('latitude')
@@ -352,7 +361,6 @@ class WarehouseResource extends Resource
                                     ->numeric()
                                     ->live()
                                     ->reactive()
-                                    ->step(0.0000001)
                                     ->suffix('درجه'),
                             ]),
 
@@ -407,7 +415,9 @@ class WarehouseResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('nearest_branch_1_id')
                                     ->label('شعبه اول')
-                                    ->relationship('nearestBranch1', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Branch::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->searchable()
                                     ->preload()
                                     ->placeholder('انتخاب شعبه'),
@@ -424,7 +434,9 @@ class WarehouseResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('nearest_branch_2_id')
                                     ->label('شعبه دوم')
-                                    ->relationship('nearestBranch2', 'name')
+                                    ->options(function () {
+                                        return \App\Models\Branch::all()->pluck('name', 'id')->toArray();
+                                    })
                                     ->searchable()
                                     ->preload()
                                     ->placeholder('انتخاب شعبه'),
@@ -562,13 +574,21 @@ class WarehouseResource extends Resource
                                     ->label('رام و راک')
                                     ->options(__('common-options.yes_no'))
                                     ->required()
-                                    ->searchable(),
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        if ($state !== 'yes') {
+                                            $set('ram_rack_count', null);
+                                        }
+                                    }),
 
                                 Forms\Components\TextInput::make('ram_rack_count')
                                     ->label('تعداد رام راک')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->suffix('عدد'),
+                                    ->suffix('عدد')
+                                    ->visible(fn ($get) => $get('ram_rack') === 'yes')
+                                    ->required(fn ($get) => $get('ram_rack') === 'yes'),
                             ]),
 
                     ])
@@ -655,9 +675,7 @@ class WarehouseResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('warehouse.table.title'))
                     ->searchable()
-                    ->sortable()
-                    ->weight('bold')
-                    ->description(fn(Warehouse $record): string => $record->manager_name),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('province.name')
                     ->label(__('warehouse.table.province'))
@@ -770,7 +788,9 @@ class WarehouseResource extends Resource
 
                 Tables\Filters\SelectFilter::make('province_id')
                     ->label(__('warehouse.filters.province'))
-                    ->relationship('province', 'name')
+                    ->options(function () {
+                        return \App\Models\Location\Province::all()->pluck('name', 'id')->toArray();
+                    })
                     ->multiple()
                     ->searchable(),
 

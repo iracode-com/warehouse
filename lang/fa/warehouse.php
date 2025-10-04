@@ -25,7 +25,9 @@ return [
     'postal_address' => 'آدرس دقیق پستی',
     'province' => 'استان',
     'branch' => 'شعبه',
+    'branch_name' => 'نام شعبه',
     'base' => 'پایگاه',
+    'status' => 'فعال/غیر فعال',
     'establishment_year' => 'سال تاسیس انبار',
     'construction_year' => 'سال ساخت',
     'branch_establishment_year' => 'سال تاسیس شعبه',
@@ -51,6 +53,7 @@ return [
     'lighting_system' => 'سیستم روشنایی',
     'ram_rack' => 'رام و راک',
     'ram_rack_count' => 'تعداد رام راک',
+    'structure_type' => 'نوع سازه',
     'longitude' => 'طول جغرافیایی',
     'latitude' => 'عرض جغرافیایی',
     'longitude_e' => 'طول جغرافیایی (E)',
@@ -330,7 +333,7 @@ return [
     ],
 
     // Branch translations
-    'branch' => [
+    'branch_info' => [
         'name' => 'نام شعبه',
         'branch_type' => 'نوع شعبه',
         'two_digit_code' => 'کد دو رقمی',

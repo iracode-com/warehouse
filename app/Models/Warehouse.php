@@ -20,8 +20,8 @@ class Warehouse extends Model
     use HasFactory;
 
     // Status constants
-    const STATUS_ACTIVE = 'active';
-    const STATUS_INACTIVE = 'inactive';
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
 
     // Approved grade constants
     const GRADE_1 = '1';

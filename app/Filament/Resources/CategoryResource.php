@@ -114,6 +114,12 @@ class CategoryResource extends Resource
                                     ->required()
                                     ->columnSpan(1),
 
+                                Forms\Components\Select::make('category_type')
+                                    ->label('نوع دسته‌بندی')
+                                    ->options(__('product-profile.options.category_types'))
+                                    ->searchable()
+                                    ->columnSpan(1),
+
                                 Forms\Components\Toggle::make('is_leaf')
                                     ->label('دسته نهایی (کالا)')
                                     ->default(false)
@@ -181,6 +187,15 @@ class CategoryResource extends Resource
                     ->numeric()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('category_type')
+                    ->label('نوع دسته‌بندی')
+                    ->getStateUsing(function ($record) {
+                        return $record->category_type ? __('product-profile.options.category_types.' . $record->category_type) : '';
+                    })
+                    ->badge()
+                    ->color('info')
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('status')
                     ->label('وضعیت')
                     ->badge()
@@ -214,6 +229,10 @@ class CategoryResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('وضعیت')
                     ->options(__('common-options.status')),
+
+                Tables\Filters\SelectFilter::make('category_type')
+                    ->label('نوع دسته‌بندی')
+                    ->options(__('product-profile.options.category_types')),
 
                 Tables\Filters\TernaryFilter::make('is_leaf')
                     ->label('دسته نهایی'),

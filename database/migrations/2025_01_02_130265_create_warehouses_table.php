@@ -16,8 +16,8 @@ return new class extends Migration
             
             // Basic warehouse information
             $table->string('title'); // عنوان انبار
-            $table->string('manager_name'); // نام مسئول انبار
-            $table->string('manager_phone'); // شماره تماس مسئول انبار
+
+            $table->string('telephone')->nullable(); // تلفن
             
             // Warehouse usage type
             $table->enum('usage_type', [
@@ -31,9 +31,9 @@ return new class extends Migration
             ]);
             
             // Location information
-            $table->string('province'); // استان
-            $table->string('branch'); // شعبه
-            $table->string('base'); // پایگاه
+            // $table->string('province')->nullable(); // استان
+            // $table->string('branch')->nullable(); // شعبه
+            // $table->string('base')->nullable(); // پایگاه
             $table->longText('warehouse_info')->nullable(); // اطلاعات سوله (انبار، انباری)
             
             // Establishment and construction
@@ -49,7 +49,7 @@ return new class extends Migration
             ]);
             
             // Area information
-            $table->decimal('area', 10, 2); // متراژ
+            $table->decimal('area', 10, 2)->nullable(); // متراژ
             $table->decimal('under_construction_area', 10, 2)->nullable(); // متراژ در دست ساخت
             
             // Structure type
@@ -59,7 +59,7 @@ return new class extends Migration
                 'prefabricated' // پیش‌ساخته
             ]);
             
-            $table->integer('warehouse_count'); // تعداد سوله
+            $table->integer('warehouse_count')->nullable(); // تعداد سوله
             
             // Pallet box information
             $table->integer('small_inventory_count')->nullable(); // تعداد موجودی کوچک
@@ -82,7 +82,6 @@ return new class extends Migration
             $table->integer('ram_rack_count')->nullable(); // تعداد رام راک
             $table->enum('cctv_system', ['healthy', 'defective', 'installing'])->nullable(); // دوربین مدار بسته
             $table->enum('lighting_system', ['healthy', 'defective'])->nullable(); // سیستم روشنایی استاندارد
-            $table->enum('telephone', ['yes', 'no']); // تلفن
             
             // Geographic information
             $table->decimal('longitude', 10, 7)->nullable(); // طول جغرافیایی
@@ -107,10 +106,12 @@ return new class extends Migration
             $table->text('postal_address')->nullable(); // آدرس دقیق پستی
             
             // Distance to nearest branches
-            $table->string('nearest_branch_1')->nullable(); // شعبه اول
+            $table->foreignId('nearest_branch_1_id')->nullable()->constrained('branches'); // شعبه اول
             $table->decimal('distance_to_branch_1', 8, 2)->nullable(); // فاصله تا شعبه اول (به کیلومتر)
-            $table->string('nearest_branch_2')->nullable(); // شعبه دوم
+            $table->foreignId('nearest_branch_2_id')->nullable()->constrained('branches'); // شعبه دوم
             $table->decimal('distance_to_branch_2', 8, 2)->nullable(); // فاصله تا شعبه دوم (به کیلومتر)
+
+            $table->boolean('status')->default(true); // فعال/غیر فعال
             
             $table->timestamps();
         });

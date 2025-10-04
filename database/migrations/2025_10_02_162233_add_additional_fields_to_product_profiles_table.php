@@ -45,9 +45,9 @@ return new class extends Migration
             // آدرس کالا
             $table->string('product_address')->nullable()->after('has_return_policy')->comment('آدرس کالا');
             
-            // حداقل موجودی و نقطه سفارش (JSON برای ذخیره بر اساس مکان)
-            $table->json('minimum_stock_by_location')->nullable()->after('product_address')->comment('حداقل موجودی بر اساس مکان');
-            $table->json('reorder_point_by_location')->nullable()->after('minimum_stock_by_location')->comment('نقطه سفارش بر اساس مکان');
+            // حداقل موجودی و نقطه سفارش
+            $table->decimal('minimum_stock_by_location', 15, 2)->nullable()->after('product_address')->comment('حداقل موجودی بر اساس مکان');
+            $table->decimal('reorder_point_by_location', 15, 2)->nullable()->after('minimum_stock_by_location')->comment('نقطه سفارش بر اساس مکان');
             
             // مشخصات فنی و شرایط نگهداری
             $table->boolean('has_technical_specs')->default(false)->after('reorder_point_by_location')->comment('دارای مشخصات فنی');

@@ -22,9 +22,9 @@ class ProductProfile extends Model
         'description',
         'category_id',
         'category_type',
-        'packaging_type',
+        'packaging_type_id',
         'product_type',
-        'brand',
+        'brand_id',
         'model',
         'barcode',
         'qr_code',
@@ -218,6 +218,16 @@ class ProductProfile extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function packagingType(): BelongsTo
+    {
+        return $this->belongsTo(PackagingType::class);
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     public function items(): HasMany

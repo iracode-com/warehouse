@@ -92,10 +92,13 @@ class ProductProfileResource extends Resource
                                         }
                                     }),
 
-                                Forms\Components\Select::make('category_type')
-                                    ->label(__('product-profile.fields.category_type'))
-                                    ->options(__('product-profile.options.category_types'))
-                                    ->searchable(),
+                                Forms\Components\Select::make('packaging_type_id')
+                                    ->label(__('product-profile.fields.packaging_type'))
+                                    ->required()
+                                    ->relationship('packagingType', 'name')
+                                    ->searchable()
+                                    ->preload(),
+
                             ]),
 
                         Grid::make(3)
@@ -126,22 +129,21 @@ class ProductProfileResource extends Resource
 
                         Grid::make(3)
                             ->schema([
-                                Forms\Components\Select::make('packaging_type')
-                                    ->label(__('product-profile.fields.packaging_type'))
-                                    ->options(__('product-profile.options.packaging_types')),
-
                                 Forms\Components\Select::make('product_type')
                                     ->label(__('product-profile.fields.product_type'))
+                                    ->required()
                                     ->options(__('product-profile.options.product_types')),
 
-                                Forms\Components\TextInput::make('brand')
+                                Forms\Components\Select::make('brand_id')
                                     ->label(__('product-profile.fields.brand'))
+                                    ->relationship('brand', 'name')
+                                    ->searchable()
+                                    ->preload(),
+
+                                Forms\Components\TextInput::make('model')
+                                    ->label(__('product-profile.fields.model'))
                                     ->maxLength(255),
                             ]),
-
-                        Forms\Components\TextInput::make('model')
-                            ->label(__('product-profile.fields.model'))
-                            ->maxLength(255),
 
                         Forms\Components\Textarea::make('description')
                             ->label(__('product-profile.fields.description'))
@@ -150,26 +152,29 @@ class ProductProfileResource extends Resource
                     ])
                     ->collapsible(),
 
+
                 Section::make(__('product-profile.sections.units_pricing'))
                     ->description(__('product-profile.sections.units_pricing_desc'))
                     ->icon('heroicon-o-scale')
                     ->iconColor('success')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(2)
                             ->schema([
-                                Forms\Components\Select::make('unit_of_measure')
-                                    ->label(__('product-profile.fields.unit_of_measure'))
-                                    ->options(__('product-profile.options.units'))
-                                    ->searchable(),
+                                // Forms\Components\Select::make('unit_of_measure')
+                                //     ->label(__('product-profile.fields.unit_of_measure'))
+                                //     ->options(__('product-profile.options.units'))
+                                //     ->searchable(),
 
                                 Forms\Components\Select::make('primary_unit')
                                     ->label(__('product-profile.fields.primary_unit'))
+                                    ->required()
                                     ->options(__('product-profile.options.units'))
                                     ->searchable(),
 
                                 Forms\Components\Select::make('secondary_unit')
                                     ->label(__('product-profile.fields.secondary_unit'))
+                                    ->required()
                                     ->options(__('product-profile.options.units'))
                                     ->searchable(),
                             ]),
@@ -183,7 +188,7 @@ class ProductProfileResource extends Resource
                                 Forms\Components\TextInput::make('standard_cost')
                                     ->label(__('product-profile.fields.standard_cost'))
                                     ->numeric()
-                                    ->step(0.01)
+                                    ->required()
                                     ->prefix('ریال'),
                             ]),
                     ])
@@ -239,42 +244,40 @@ class ProductProfileResource extends Resource
                     ->iconColor('info')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('feature_1')
-                                    ->label(__('product-profile.fields.feature_1'))
-                                    ->maxLength(255)
-                                    ->helperText(__('product-profile.fields.feature_1_helper')),
+                        // Grid::make(2)
+                        //     ->schema([
+                        //         Forms\Components\TextInput::make('feature_1')
+                        //             ->label(__('product-profile.fields.feature_1'))
+                        //             ->maxLength(255)
+                        //             ->helperText(__('product-profile.fields.feature_1_helper')),
 
-                                Forms\Components\TextInput::make('feature_2')
-                                    ->label(__('product-profile.fields.feature_2'))
-                                    ->maxLength(255)
-                                    ->helperText(__('product-profile.fields.feature_2_helper')),
-                            ]),
+                        //         Forms\Components\TextInput::make('feature_2')
+                        //             ->label(__('product-profile.fields.feature_2'))
+                        //             ->maxLength(255)
+                        //             ->helperText(__('product-profile.fields.feature_2_helper')),
+                        //     ]),
 
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\Toggle::make('has_expiry_date')
                                     ->label(__('product-profile.fields.has_expiry_date')),
-
-                                Forms\Components\Select::make('consumption_status')
-                                    ->label(__('product-profile.fields.consumption_status'))
-                                    ->options(__('product-profile.options.consumption_statuses')),
-                            ]),
-
-                        Grid::make(2)
-                            ->schema([
                                 Forms\Components\Toggle::make('is_flammable')
                                     ->label(__('product-profile.fields.is_flammable')),
-
                                 Forms\Components\Toggle::make('has_return_policy')
                                     ->label(__('product-profile.fields.has_return_policy')),
                             ]),
 
-                        Forms\Components\TextInput::make('product_address')
-                            ->label(__('product-profile.fields.product_address'))
-                            ->maxLength(255)
-                            ->helperText(__('product-profile.fields.product_address_helper')),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('consumption_status')
+                                    ->label(__('product-profile.fields.consumption_status'))
+                                    ->options(__('product-profile.options.consumption_statuses')),
+
+                                Forms\Components\TextInput::make('product_address')
+                                    ->label(__('product-profile.fields.product_address'))
+                                    ->required()
+                                    ->maxLength(255),
+                            ]),
                     ])
                     ->collapsible(),
 
@@ -283,18 +286,27 @@ class ProductProfileResource extends Resource
                     ->icon('heroicon-o-chart-bar')
                     ->iconColor('secondary')
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
-                        Forms\Components\KeyValue::make('minimum_stock_by_location')
-                            ->label(__('product-profile.fields.minimum_stock_by_location'))
-                            ->keyLabel('مکان (استان/شهرستان)')
-                            ->valueLabel('حداقل موجودی')
-                            ->helperText(__('product-profile.fields.minimum_stock_by_location_helper')),
+                        // Forms\Components\KeyValue::make('minimum_stock_by_location')
+                        //     ->label(__('product-profile.fields.minimum_stock_by_location'))
+                        //     ->keyLabel('مکان (استان/شهرستان)')
+                        //     ->valueLabel('حداقل موجودی'),
 
-                        Forms\Components\KeyValue::make('reorder_point_by_location')
+                        // Forms\Components\KeyValue::make('reorder_point_by_location')
+                        //     ->label(__('product-profile.fields.reorder_point_by_location'))
+                        //     ->keyLabel('مکان (استان/شهرستان)')
+                        //     ->valueLabel('نقطه سفارش'),
+
+                        Forms\Components\TextInput::make('minimum_stock_by_location')
+                            ->label(__('product-profile.fields.minimum_stock_by_location'))
+                            ->numeric()
+                            ->required(),
+
+                        Forms\Components\TextInput::make('reorder_point_by_location')
                             ->label(__('product-profile.fields.reorder_point_by_location'))
-                            ->keyLabel('مکان (استان/شهرستان)')
-                            ->valueLabel('نقطه سفارش')
-                            ->helperText(__('product-profile.fields.reorder_point_by_location_helper')),
+                            ->numeric()
+                            ->required(),
                     ])
                     ->collapsible(),
 
@@ -315,29 +327,29 @@ class ProductProfileResource extends Resource
                                     ->label(__('product-profile.fields.has_storage_conditions'))
                                     ->default(false)
                                     ->live(),
+
+                                Forms\Components\Toggle::make('has_inspection')
+                                    ->label(__('product-profile.fields.has_inspection'))
+                                    ->default(false)
+                                    ->live(),
                             ]),
 
                         Forms\Components\Textarea::make('technical_specs')
                             ->label(__('product-profile.fields.technical_specs'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_technical_specs'))
+                            ->visible(fn($get): bool => $get('has_technical_specs'))
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('storage_conditions')
                             ->label(__('product-profile.fields.storage_conditions'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_storage_conditions'))
+                            ->visible(fn($get): bool => $get('has_storage_conditions'))
                             ->columnSpanFull(),
-
-                        Forms\Components\Toggle::make('has_inspection')
-                            ->label(__('product-profile.fields.has_inspection'))
-                            ->default(false)
-                            ->live(),
 
                         Forms\Components\Textarea::make('inspection_details')
                             ->label(__('product-profile.fields.inspection_details'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_inspection'))
+                            ->visible(fn($get): bool => $get('has_inspection'))
                             ->columnSpanFull(),
                     ])
                     ->collapsible(),
@@ -361,24 +373,24 @@ class ProductProfileResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->visible(fn ($get): bool => $get('has_similar_products'))
+                            ->visible(fn($get): bool => $get('has_similar_products'))
                             ->columnSpanFull(),
 
-                        Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('estimated_value')
-                                    ->label(__('product-profile.fields.estimated_value'))
-                                    ->numeric()
-                                    ->step(0.01)
-                                    ->prefix('ریال'),
+                        // Grid::make(2)
+                        //     ->schema([
+                        //         Forms\Components\TextInput::make('estimated_value')
+                        //             ->label(__('product-profile.fields.estimated_value'))
+                        //             ->numeric()
+                        //             ->step(0.01)
+                        //             ->prefix('ریال'),
 
-                                Forms\Components\TextInput::make('annual_inflation_rate')
-                                    ->label(__('product-profile.fields.annual_inflation_rate'))
-                                    ->numeric()
-                                    ->step(0.01)
-                                    ->suffix('%')
-                                    ->helperText(__('product-profile.fields.annual_inflation_rate_helper')),
-                            ]),
+                        //         Forms\Components\TextInput::make('annual_inflation_rate')
+                        //             ->label(__('product-profile.fields.annual_inflation_rate'))
+                        //             ->numeric()
+                        //             ->step(0.01)
+                        //             ->suffix('%')
+                        //             ->helperText(__('product-profile.fields.annual_inflation_rate_helper')),
+                        //     ]),
                     ])
                     ->collapsible(),
 
@@ -387,6 +399,7 @@ class ProductProfileResource extends Resource
                     ->icon('heroicon-o-building-storefront')
                     ->iconColor('warning')
                     ->columnSpanFull()
+                    ->visible(false)
                     ->schema([
                         Forms\Components\Select::make('related_warehouses')
                             ->label(__('product-profile.fields.related_warehouses'))
@@ -401,6 +414,7 @@ class ProductProfileResource extends Resource
                     ->icon('heroicon-o-building-office-2')
                     ->iconColor('info')
                     ->columnSpanFull()
+                    ->visible(false)
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -497,7 +511,7 @@ class ProductProfileResource extends Resource
                     ->label(__('product-profile.table.name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn (ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
+                    ->description(fn(ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
 
                 Tables\Columns\TextColumn::make('category.name')
                     ->label(__('product-profile.table.category'))
@@ -506,13 +520,24 @@ class ProductProfileResource extends Resource
                     ->badge()
                     ->color('info'),
 
-                Tables\Columns\TextColumn::make('category_type')
+                Tables\Columns\TextColumn::make('category.category_type')
                     ->label(__('product-profile.table.category_type'))
                     ->getStateUsing(function ($record) {
-                        return $record->category_type ? __('product-profile.options.category_types.' . $record->category_type) : '';
+                        return $record->category && $record->category->category_type ?
+                            __('product-profile.options.category_types.' . $record->category->category_type) : '';
                     })
                     ->badge()
+                    ->color('warning')
                     ->toggleable(),
+
+                Tables\Columns\TextColumn::make('packagingType.name')
+                    ->label(__('product-profile.fields.packaging_type'))
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('info')
+                    ->toggleable(),
+
 
                 Tables\Columns\TextColumn::make('product_type')
                     ->label(__('product-profile.table.product_type'))
@@ -522,9 +547,12 @@ class ProductProfileResource extends Resource
                     ->badge()
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('brand')
+                Tables\Columns\TextColumn::make('brand.name')
                     ->label(__('product-profile.table.brand'))
                     ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('success')
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('consumption_status')
@@ -533,7 +561,7 @@ class ProductProfileResource extends Resource
                         return $record->consumption_status ? __('product-profile.options.consumption_statuses.' . $record->consumption_status) : '';
                     })
                     ->badge()
-                    ->color(fn (ProductProfile $record): string => match($record->consumption_status) {
+                    ->color(fn(ProductProfile $record): string => match ($record->consumption_status) {
                         'high_consumption' => 'success',
                         'strategic' => 'warning',
                         'low_consumption' => 'info',
@@ -565,7 +593,7 @@ class ProductProfileResource extends Resource
                         return $record->status_label;
                     })
                     ->badge()
-                    ->color(fn (ProductProfile $record): string => $record->status_color),
+                    ->color(fn(ProductProfile $record): string => $record->status_color),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label(__('product-profile.table.is_active'))
@@ -585,9 +613,22 @@ class ProductProfileResource extends Resource
                     ->searchable()
                     ->preload(),
 
-                Tables\Filters\SelectFilter::make('category_type')
+                Tables\Filters\SelectFilter::make('category.category_type')
                     ->label(__('product-profile.filters.category_type'))
                     ->options(__('product-profile.options.category_types')),
+
+                Tables\Filters\SelectFilter::make('packaging_type_id')
+                    ->label(__('product-profile.filters.packaging_type'))
+                    ->relationship('packagingType', 'name')
+                    ->searchable()
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('brand_id')
+                    ->label(__('product-profile.filters.brand'))
+                    ->relationship('brand', 'name')
+                    ->searchable()
+                    ->preload(),
+
 
                 Tables\Filters\SelectFilter::make('product_type')
                     ->label(__('product-profile.filters.product_type'))
@@ -642,7 +683,7 @@ class ProductProfileResource extends Resource
                     ])
                     ->action(function (ProductProfile $record, array $data): void {
                         $newProduct = $record->copyProduct($data['new_name'], $data['new_sku'] ?: null);
-                        
+
                         Notification::make()
                             ->title(__('product-profile.actions.copy_success'))
                             ->body(__('product-profile.actions.copy_success_body', ['sku' => $newProduct->sku]))

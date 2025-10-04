@@ -38,6 +38,7 @@ class Category extends Model
         'full_path',
         'children_count',
         'items_count',
+        'category_type',
     ];
 
     protected function casts(): array
@@ -137,10 +138,6 @@ class Category extends Model
     // Helper methods
     public function getFullPathAttribute(): string
     {
-        if ($this->full_path) {
-            return $this->full_path;
-        }
-
         $path = collect([$this->name]);
         $parent = $this->parent;
 

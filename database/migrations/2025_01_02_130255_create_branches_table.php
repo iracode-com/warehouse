@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('region_id');
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->tinyInteger('branch_type')->comment('نوع شعبه(0:شهرستان،1:ستاد،2:شعبه،3:دفترنمایندگی مستقل،4:دفترنمایندگی وابسته،5:مناطق شهری)');
-            $table->json('name')->comment('نام شعبه');
+            $table->string('name', 100)->comment('نام شعبه');
             $table->string('two_digit_code', 2)->nullable()->comment('کد دو رقمی شعبه');
             $table->string('date_establishment', 10)->nullable()->comment('تاریخ تاسیس');
             $table->string('phone', 11)->nullable()->comment('شماره تماس');

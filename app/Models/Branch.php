@@ -44,7 +44,6 @@ class Branch extends Model
     ];
 
     protected $casts = [
-        'name' => 'array',
         'city_border' => 'array',
         'closed_thursday' => 'boolean',
         'closure_date' => 'date',
@@ -77,7 +76,7 @@ class Branch extends Model
 
     public function region(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(\App\Models\Location\Region::class);
     }
 
     public function parent(): BelongsTo

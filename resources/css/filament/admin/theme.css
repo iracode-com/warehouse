@@ -4,3 +4,8 @@
 @source '../../../../resources/views/filament/**/*';
 
 @source '../../../../vendor/diogogpinto/filament-auth-ui-enhancer/resources/**/*.blade.php';
+
+
+.fi-topbar-ctn{
+    z-index: 999999;
+}
