@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('personnel_activity_locations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('personnel_id')->constrained('personnels')->onDelete('cascade');
-            $table->foreignId('activity_location_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+            $table->foreignId('personnel_id')
+                ->constrained('personnels', 'id', 'pal_personnel_id')
+                ->onDelete('cascade');
             
-            $table->unique(['personnel_id', 'activity_location_id']);
+            $table->foreignId('activity_location_id')
+                ->constrained('activity_locations', 'id', 'pal_activity_location_id')
+                ->onDelete('cascade');
+
+            $table->timestamps();
         });
     }
 

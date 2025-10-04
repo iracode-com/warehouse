@@ -45,11 +45,11 @@ return new class extends Migration {
             $table->datetime('start_hire_date')->nullable()->comment('تاریخ شروع استخدام');
             $table->datetime('end_hire_date')->nullable()->comment('تاریخ پایان استخدام');
 
-            $table->foreignId("position_id")->nullable()->constrained('ar_positions')->comment('سمت سازمانی');
-            $table->foreignId("employment_type_id")->nullable()->constrained('ar_employment_types')->comment('نوع استخدام');
-            $table->foreignId("cooperation_type_id")->nullable()->constrained('ar_cooperation_types')->comment('نوع همکاری');
-            $table->foreignId("education_degree_id")->nullable()->constrained('edu_education_degrees')->comment('مدرک تحصیلی');
-            $table->foreignId("education_field_id")->nullable()->constrained('edu_education_fields')->comment('رشته تحصیلی');
+            $table->foreignId("position_id")->nullable()->constrained('positions')->comment('سمت سازمانی');
+            $table->foreignId("employment_type_id")->nullable()->constrained('employment_types')->comment('نوع استخدام');
+            $table->foreignId("cooperation_type_id")->nullable()->constrained('cooperation_types')->comment('نوع همکاری');
+            $table->foreignId("education_degree_id")->nullable()->constrained('education_degrees')->comment('مدرک تحصیلی');
+            $table->foreignId("education_field_id")->nullable()->constrained('education_fields')->comment('رشته تحصیلی');
 
             $table->foreignId("user_id")->nullable()->constrained('users')->comment('شناسه کاربر مرتبط');
 

@@ -34,6 +34,8 @@ return [
         'files_images_desc' => 'تصاویر و اسناد مربوط به کالا',
         'descriptions' => 'توضیحات',
         'descriptions_desc' => 'یادداشت‌ها و توضیحات اضافی',
+        'codes_barcodes' => 'کدها و بارکدها',
+        'codes_barcodes_desc' => 'نمایش بارکد و کد QR کالا',
     ],
 
     // Form fields
@@ -202,6 +204,10 @@ return [
         'edit' => 'ویرایش',
         'delete' => 'حذف',
         'delete_selected' => 'حذف انتخاب شده‌ها',
+        'print_barcode' => 'چاپ بارکد',
+        'copy_barcode' => 'کپی بارکد',
+        'print_qr_code' => 'چاپ کد QR',
+        'copy_qr_code' => 'کپی کد QR',
     ],
 
     // Copy form
@@ -209,5 +215,13 @@ return [
         'new_name' => 'نام جدید',
         'new_sku' => 'کد جدید (اختیاری)',
         'new_sku_helper' => 'در صورت خالی بودن، خودکار تولید می‌شود',
+    ],
+
+    // Messages
+    'messages' => [
+        'no_barcode' => 'بارکد تعریف نشده است',
+        'no_qr_code' => 'کد QR تعریف نشده است',
+        'barcode_copied' => 'بارکد کپی شد',
+        'qr_code_copied' => 'کد QR کپی شد',
     ],
 ];

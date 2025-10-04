@@ -623,6 +623,9 @@ class ProductProfileResource extends Resource
                     ->native(false),
             ])
             ->actions([
+                \Filament\Actions\ViewAction::make()
+                    ->label(__('product-profile.actions.view'))
+                    ->icon('heroicon-o-eye'),
                 Action::make('copy')
                     ->label(__('product-profile.actions.copy'))
                     ->icon('heroicon-o-document-duplicate')
@@ -661,6 +664,7 @@ class ProductProfileResource extends Resource
         return [
             'index' => Pages\ListProductProfiles::route('/'),
             'create' => Pages\CreateProductProfile::route('/create'),
+            'view' => Pages\ViewProductProfile::route('/{record}'),
             'edit' => Pages\EditProductProfile::route('/{record}/edit'),
         ];
     }
