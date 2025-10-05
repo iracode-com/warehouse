@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('sku')->unique()->comment('کد کالا (Stock Keeping Unit)');
             $table->string('name')->comment('نام کالا');
-            $table->text('description')->nullable()->comment('توضیحات کالا');
+            $table->longText('description')->nullable()->comment('توضیحات کالا');
             $table->unsignedBigInteger('category_id')->comment('شناسه دسته‌بندی');
             $table->string('brand')->nullable()->comment('برند کالا');
             $table->string('model')->nullable()->comment('مدل کالا');
@@ -41,8 +41,7 @@ return new class extends Migration
             $table->json('custom_attributes')->nullable()->comment('ویژگی‌های سفارشی (JSON)');
             $table->json('images')->nullable()->comment('تصاویر کالا (JSON)');
             $table->json('documents')->nullable()->comment('اسناد کالا (JSON)');
-            $table->text('notes')->nullable()->comment('یادداشت‌ها');
-            $table->json('metadata')->nullable()->comment('اطلاعات اضافی (JSON)');
+            $table->json('specifications')->nullable()->comment('مشخصات کالا (JSON)');
             $table->boolean('is_active')->default(true)->comment('وضعیت فعال/غیرفعال');
             $table->timestamps();
             

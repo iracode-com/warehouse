@@ -6,11 +6,11 @@ use App\Filament\Resources\ProductProfileResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\TextEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\ImageEntry;
-use Filament\Schemas\Components\ViewEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\ViewEntry;
 
 class ViewProductProfile extends ViewRecord
 {
@@ -26,6 +26,7 @@ class ViewProductProfile extends ViewRecord
     public function infolist(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->schema([
                 Section::make(__('product-profile.sections.basic_info'))
                     ->description(__('product-profile.sections.basic_info_desc'))
@@ -45,20 +46,25 @@ class ViewProductProfile extends ViewRecord
                                     ->color('success'),
                             ]),
 
-                        Grid::make(3)
+                        Grid::make(4)
                             ->schema([
                                 TextEntry::make('category.name')
                                     ->label(__('product-profile.fields.category_id'))
                                     ->badge()
                                     ->color('info'),
 
-                                TextEntry::make('category_type')
+                                TextEntry::make('category.category_type')
                                     ->label(__('product-profile.fields.category_type'))
                                     ->getStateUsing(function ($record) {
-                                        return $record->category_type ? __('product-profile.options.category_types.' . $record->category_type) : '';
+                                        return $record->category && $record->category->category_type ? __('product-profile.options.category_types.' . $record->category->category_type) : '';
                                     })
                                     ->badge()
                                     ->color('warning'),
+
+                                TextEntry::make('packagingType.name')
+                                    ->label(__('product-profile.fields.packaging_type'))
+                                    ->badge()
+                                    ->color('info'),
 
                                 TextEntry::make('product_type')
                                     ->label(__('product-profile.fields.product_type'))
@@ -71,7 +77,7 @@ class ViewProductProfile extends ViewRecord
 
                         Grid::make(2)
                             ->schema([
-                                TextEntry::make('brand')
+                                TextEntry::make('brand.name')
                                     ->label(__('product-profile.fields.brand'))
                                     ->placeholder('تعریف نشده'),
 
@@ -94,21 +100,34 @@ class ViewProductProfile extends ViewRecord
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                ViewEntry::make('barcode_display')
+                                TextEntry::make('barcode')
                                     ->label(__('product-profile.fields.barcode'))
-                                    ->view('filament.infolists.barcode-display')
-                                    ->viewData(fn ($record) => [
-                                        'barcode' => $record->barcode,
-                                        'sku' => $record->sku,
-                                    ]),
+                                    ->placeholder('تعریف نشده')
+                                    ->badge()
+                                    ->color('info')
+                                    ->copyable()
+                                    ->copyMessage('بارکد کپی شد'),
 
-                                ViewEntry::make('qr_code_display')
+                                TextEntry::make('qr_code')
                                     ->label(__('product-profile.fields.qr_code'))
-                                    ->view('filament.infolists.qr-code-display')
-                                    ->viewData(fn ($record) => [
-                                        'qr_code' => $record->qr_code,
-                                        'sku' => $record->sku,
-                                    ]),
+                                    ->placeholder('تعریف نشده')
+                                    ->badge()
+                                    ->color('success')
+                                    ->copyable()
+                                    ->copyMessage('کد QR کپی شد'),
+                            ]),
+                        
+                        Grid::make(2)
+                            ->schema([
+                                ImageEntry::make('barcode_image')
+                                    ->label('تصویر بارکد')
+                                    ->getStateUsing(fn ($record) => $record->barcode_image)
+                                    ->visible(fn ($record) => !empty($record->barcode)),
+
+                                ImageEntry::make('qr_code_image')
+                                    ->label('تصویر کد QR')
+                                    ->getStateUsing(fn ($record) => $record->qr_code_image)
+                                    ->visible(fn ($record) => !empty($record->qr_code)),
                             ]),
                     ])
                     ->collapsible(),

@@ -65,8 +65,7 @@ class ProductProfile extends Model
         'custom_attributes',
         'images',
         'documents',
-        'notes',
-        'metadata',
+        'specifications',
         'additional_description',
         'is_active',
     ];
@@ -98,6 +97,7 @@ class ProductProfile extends Model
             'images' => 'array',
             'documents' => 'array',
             'metadata' => 'array',
+            'specifications' => 'array',
             'is_active' => 'boolean',
         ];
     }
@@ -236,6 +236,69 @@ class ProductProfile extends Model
     }
 
     // Helper methods
+    public function getBarcodeImageAttribute(): ?string
+    {
+        if (!$this->barcode) {
+            return null;
+        }
+        
+        // تولید بارکد به صورت SVG
+        $barcode = $this->barcode;
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60">';
+        $svg .= '<rect width="200" height="60" fill="white" stroke="black" stroke-width="1"/>';
+        
+        // تولید بارکد ساده (خطوط عمودی)
+        $x = 10;
+        for ($i = 0; $i < strlen($barcode); $i++) {
+            $height = ($i % 2 == 0) ? 40 : 30;
+            $svg .= '<rect x="' . $x . '" y="10" width="2" height="' . $height . '" fill="black"/>';
+            $x += 2;
+        }
+        
+        // نمایش متن بارکد
+        $svg .= '<text x="100" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="black">' . $barcode . '</text>';
+        $svg .= '</svg>';
+        
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
+
+    public function getQrCodeImageAttribute(): ?string
+    {
+        if (!$this->qr_code) {
+            return null;
+        }
+        
+        // تولید QR code ساده به صورت SVG
+        $qrCode = $this->qr_code;
+        $size = 150;
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $size . '" height="' . $size . '" viewBox="0 0 ' . $size . ' ' . $size . '">';
+        $svg .= '<rect width="' . $size . '" height="' . $size . '" fill="white" stroke="black" stroke-width="1"/>';
+        
+        // تولید الگوی QR code ساده
+        $cellSize = 5;
+        $cells = $size / $cellSize;
+        
+        for ($i = 0; $i < $cells; $i++) {
+            for ($j = 0; $j < $cells; $j++) {
+                if (($i + $j) % 3 == 0 || ($i * $j) % 7 == 0) {
+                    $x = $i * $cellSize;
+                    $y = $j * $cellSize;
+                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $cellSize . '" height="' . $cellSize . '" fill="black"/>';
+                }
+            }
+        }
+        
+        // اضافه کردن مربع‌های گوشه
+        $cornerSize = 15;
+        $svg .= '<rect x="5" y="5" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
+        $svg .= '<rect x="' . ($size - $cornerSize - 5) . '" y="5" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
+        $svg .= '<rect x="5" y="' . ($size - $cornerSize - 5) . '" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
+        
+        $svg .= '</svg>';
+        
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+    }
+
     public static function generateSKU(int $categoryId): string
     {
         // تولید کد کالا بر اساس دسته‌بندی و شماره ترتیبی

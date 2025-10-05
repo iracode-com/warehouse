@@ -19,6 +19,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 use BackedEnum;
+use Illuminate\Validation\Rules\Password;
 
 class UserResource extends Resource
 {
@@ -110,7 +111,10 @@ class UserResource extends Resource
                                     ->label(__('warehouse.user.password'))
                                     ->password()
                                     ->required(fn (string $context): bool => $context === 'create')
-                                    ->minLength(8)
+                                    ->rules([
+                                        Password::min(8)->mixedCase()->letters()->numbers()
+                                    ])
+                                    ->revealable()
                                     ->dehydrated(fn ($state) => filled($state))
                                     ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
                                 
@@ -120,6 +124,7 @@ class UserResource extends Resource
                                     ->required(fn (string $context): bool => $context === 'create')
                                     ->minLength(8)
                                     ->same('password')
+                                    ->revealable()
                                     ->dehydrated(false),
                             ]),
                     ])
@@ -175,6 +180,7 @@ class UserResource extends Resource
                     ->label(__('warehouse.user.table.username'))
                     ->searchable()
                     ->sortable()
+                    ->copyable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('roles.name')

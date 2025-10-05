@@ -101,7 +101,7 @@ return [
         'is_active' => 'فعال',
         'images' => 'تصاویر کالا',
         'documents' => 'اسناد و مدارک',
-        'notes' => 'یادداشت‌ها',
+        'specifications' => 'مشخصات کالا',
         'additional_description' => 'توضیحات اضافی',
     ],
 
@@ -116,6 +116,7 @@ return [
             'scrap' => 'اسقاطی',
             'defective' => 'معیوب',
             'assets' => 'اموال',
+            'other' => 'متفرقه',
         ],
         'packaging_types' => [
             'carton' => 'کارتن',

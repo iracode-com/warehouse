@@ -52,4 +52,13 @@ return [
         'delete' => 'حذف',
         'delete_selected' => 'حذف انتخاب شده‌ها',
     ],
+
+    // Tree widget
+    'tree' => [
+        'title' => 'ساختار درختی دسته‌بندی‌ها',
+        'no_categories' => 'هیچ دسته‌بندی‌ای یافت نشد',
+        'subcategories_count' => 'زیردسته',
+        'expand' => 'باز کردن',
+        'collapse' => 'بستن',
+    ],
 ];

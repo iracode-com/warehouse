@@ -696,6 +696,7 @@ function get_latest_assets()
 {
     $assetsPath = public_path('build/assets');
     $cssFile = null;
+    $cssThemeFile = null;
     $jsFile = null;
 
     if (File::isDirectory($assetsPath)) {
@@ -705,6 +706,12 @@ function get_latest_assets()
             if ($file->getExtension() === 'css') {
                 if (!$cssFile || $file->getMTime() > $cssFile->getMTime()) {
                     $cssFile = $file;
+                }
+            }
+
+            if ($file->getExtension() === 'css' && str_contains($file->getFilename(), 'theme')) {
+                if (!$cssThemeFile || $file->getMTime() > $cssThemeFile->getMTime()) {
+                    $cssThemeFile = $file;
                 }
             }
 
@@ -719,6 +726,7 @@ function get_latest_assets()
     return [
         'css' => $cssFile ? asset('build/assets/' . $cssFile->getFilename()) : null,
         'js' => $jsFile ? asset('build/assets/' . $jsFile->getFilename()) : null,
+        'css_theme' => $cssThemeFile ? asset('build/assets/' . $cssThemeFile->getFilename()) : null,
     ];
 }
 

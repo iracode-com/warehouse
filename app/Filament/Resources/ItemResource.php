@@ -88,6 +88,8 @@ class ItemResource extends Resource
                                 Forms\Components\TextInput::make('serial_number')
                                     ->label(__('item.fields.serial_number'))
                                     ->maxLength(255)
+                                    ->required()
+                                    ->unique(ignoreRecord: true)
                                     ->helperText(__('item.fields.serial_number_helper')),
 
                                 Forms\Components\Select::make('status')
@@ -105,24 +107,25 @@ class ItemResource extends Resource
                     ->iconColor('warning')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(1)
                             ->schema([
                                 Forms\Components\TextInput::make('current_stock')
                                     ->label(__('item.fields.current_stock'))
                                     ->numeric()
+                                    ->required()
                                     ->default(0)
                                     ->helperText(__('item.fields.current_stock_helper')),
 
-                                Forms\Components\TextInput::make('min_stock')
-                                    ->label(__('item.fields.min_stock'))
-                                    ->numeric()
-                                    ->default(0)
-                                    ->helperText(__('item.fields.min_stock_helper')),
+                                // Forms\Components\TextInput::make('min_stock')
+                                //     ->label(__('item.fields.min_stock'))
+                                //     ->numeric()
+                                //     ->default(0)
+                                //     ->helperText(__('item.fields.min_stock_helper')),
 
-                                Forms\Components\TextInput::make('max_stock')
-                                    ->label(__('item.fields.max_stock'))
-                                    ->numeric()
-                                    ->helperText(__('item.fields.max_stock_helper')),
+                                // Forms\Components\TextInput::make('max_stock')
+                                //     ->label(__('item.fields.max_stock'))
+                                //     ->numeric()
+                                //     ->helperText(__('item.fields.max_stock_helper')),
                             ]),
 
                         Grid::make(2)
@@ -130,14 +133,13 @@ class ItemResource extends Resource
                                 Forms\Components\TextInput::make('unit_cost')
                                     ->label(__('item.fields.unit_cost'))
                                     ->numeric()
-                                    ->step(0.01)
+                                    ->required()
                                     ->prefix('ریال')
                                     ->helperText(__('item.fields.unit_cost_helper')),
 
                                 Forms\Components\TextInput::make('selling_price')
                                     ->label(__('item.fields.selling_price'))
                                     ->numeric()
-                                    ->step(0.01)
                                     ->prefix('ریال')
                                     ->helperText(__('item.fields.selling_price_helper')),
                             ]),
@@ -154,16 +156,19 @@ class ItemResource extends Resource
                                 Forms\Components\DatePicker::make('manufacture_date')
                                     ->label(__('item.fields.manufacture_date'))
                                     ->helperText(__('item.fields.manufacture_date_helper'))
+                                    ->required()
                                     ->jalali(),
 
                                 Forms\Components\DatePicker::make('expiry_date')
                                     ->label(__('item.fields.expiry_date'))
                                     ->helperText(__('item.fields.expiry_date_helper'))
+                                    ->required()
                                     ->jalali(),
 
                                 Forms\Components\DatePicker::make('purchase_date')
                                     ->label(__('item.fields.purchase_date'))
                                     ->helperText(__('item.fields.purchase_date_helper'))
+                                    ->required()
                                     ->jalali(),
                             ]),
                     ]),
@@ -174,46 +179,47 @@ class ItemResource extends Resource
                     ->iconColor('secondary')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(1)
                             ->schema([
                                 Forms\Components\Select::make('warehouse_id')
                                     ->label(__('item.fields.warehouse_id'))
                                     ->relationship('warehouse', 'title')
                                     ->searchable()
                                     ->preload()
+                                    ->required()
                                     ->helperText(__('item.fields.warehouse_id_helper')),
 
-                                Forms\Components\Select::make('zone_id')
-                                    ->label(__('item.fields.zone_id'))
-                                    ->relationship('zone', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->helperText(__('item.fields.zone_id_helper')),
+                                // Forms\Components\Select::make('zone_id')
+                                //     ->label(__('item.fields.zone_id'))
+                                //     ->relationship('zone', 'name')
+                                //     ->searchable()
+                                //     ->preload()
+                                //     ->helperText(__('item.fields.zone_id_helper')),
                             ]),
 
-                        Grid::make(3)
-                            ->schema([
-                                Forms\Components\Select::make('rack_id')
-                                    ->label(__('item.fields.rack_id'))
-                                    ->relationship('rack', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->helperText(__('item.fields.rack_id_helper')),
+                        // Grid::make(3)
+                        //     ->schema([
+                        //         Forms\Components\Select::make('rack_id')
+                        //             ->label(__('item.fields.rack_id'))
+                        //             ->relationship('rack', 'name')
+                        //             ->searchable()
+                        //             ->preload()
+                        //             ->helperText(__('item.fields.rack_id_helper')),
 
-                                Forms\Components\Select::make('shelf_level_id')
-                                    ->label(__('item.fields.shelf_level_id'))
-                                    ->relationship('shelfLevel', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->helperText(__('item.fields.shelf_level_id_helper')),
+                        //         Forms\Components\Select::make('shelf_level_id')
+                        //             ->label(__('item.fields.shelf_level_id'))
+                        //             ->relationship('shelfLevel', 'name')
+                        //             ->searchable()
+                        //             ->preload()
+                        //             ->helperText(__('item.fields.shelf_level_id_helper')),
 
-                                Forms\Components\Select::make('pallet_id')
-                                    ->label(__('item.fields.pallet_id'))
-                                    ->relationship('pallet', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->helperText(__('item.fields.pallet_id_helper')),
-                            ]),
+                        //         Forms\Components\Select::make('pallet_id')
+                        //             ->label(__('item.fields.pallet_id'))
+                        //             ->relationship('pallet', 'name')
+                        //             ->searchable()
+                        //             ->preload()
+                        //             ->helperText(__('item.fields.pallet_id_helper')),
+                        //     ]),
                     ]),
 
                 Section::make(__('item.sections.settings'))
@@ -241,7 +247,7 @@ class ItemResource extends Resource
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('productProfile.name')
-                    ->label(__('item.table.name'))
+                    ->label(__('item.fields.product_profile_id'))
                     ->searchable()
                     ->sortable()
                     ->description(fn (Item $record): string => $record->productProfile?->brand ? "برند: {$record->productProfile->brand}" : ''),
@@ -262,14 +268,12 @@ class ItemResource extends Resource
                     ->label(__('item.table.unit_cost'))
                     ->numeric()
                     ->sortable()
-                    ->money('IRR')
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('selling_price')
                     ->label(__('item.table.selling_price'))
                     ->numeric()
                     ->sortable()
-                    ->money('IRR')
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('warehouse.title')

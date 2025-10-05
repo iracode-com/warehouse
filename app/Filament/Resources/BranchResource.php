@@ -35,17 +35,17 @@ class BranchResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('warehouse.branch.navigation.plural');
+        return __('branch.navigation.plural');
     }
 
     public static function getModelLabel(): string
     {
-        return __('warehouse.branch.navigation.singular');
+        return __('branch.navigation.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('warehouse.branch.navigation.plural');
+        return __('branch.navigation.plural');
     }
 
     public static function getNavigationGroup(): ?string
@@ -64,20 +64,20 @@ class BranchResource extends Resource
                         Tab::make(__('warehouse.branch_tabs.basic_info'))
                             ->icon('heroicon-o-building-office')
                             ->schema([
-                                Section::make(__('warehouse.branch.sections.basic_info'))
-                                    ->description(__('warehouse.branch.sections.basic_info_desc'))
+                                Section::make(__('branch.sections.basic_info'))
+                                    ->description(__('branch.sections.basic_info_desc'))
                                     ->icon('heroicon-o-building-office')
                                     ->iconColor('primary')
                                     ->schema([
                                         Grid::make(2)
                                             ->schema([
                                                 Forms\Components\TextInput::make('name')
-                                                    ->label(__('warehouse.branch.name'))
+                                                    ->label(__('branch.name'))
                                                     ->required()
                                                     ->maxLength(255),
                                                 
                                                 Forms\Components\Select::make('branch_type')
-                                                    ->label(__('warehouse.branch.branch_type'))
+                                                    ->label(__('branch.branch_type'))
                                                     ->options([
                                                         Branch::BRANCH_TYPE_COUNTY => 'شهرستان',
                                                         Branch::BRANCH_TYPE_HEADQUARTERS => 'ستاد',
@@ -93,49 +93,49 @@ class BranchResource extends Resource
                                         Grid::make(3)
                                             ->schema([
                                                 Forms\Components\TextInput::make('two_digit_code')
-                                                    ->label(__('warehouse.branch.two_digit_code'))
+                                                    ->label(__('branch.two_digit_code'))
                                                     ->maxLength(2),
                                                 
                                                 Forms\Components\TextInput::make('date_establishment')
-                                                    ->label(__('warehouse.branch.date_establishment'))
+                                                    ->label(__('branch.date_establishment'))
                                                     ->maxLength(10),
                                                 
                                                 Forms\Components\TextInput::make('coding')
-                                                    ->label(__('warehouse.branch.coding'))
+                                                    ->label(__('branch.coding'))
                                                     ->maxLength(6),
                                             ]),
                                         
                                         Forms\Components\Textarea::make('description')
-                                            ->label(__('warehouse.branch.description'))
+                                            ->label(__('branch.description'))
                                             ->rows(3)
                                             ->columnSpanFull(),
                                     ])
                                     ->collapsible(),
 
-                                Section::make(__('warehouse.branch.sections.contact_info'))
-                                    ->description(__('warehouse.branch.sections.contact_info_desc'))
+                                Section::make(__('branch.sections.contact_info'))
+                                    ->description(__('branch.sections.contact_info_desc'))
                                     ->icon('heroicon-o-phone')
                                     ->iconColor('success')
                                     ->schema([
                                         Grid::make(3)
                                             ->schema([
                                                 Forms\Components\TextInput::make('phone')
-                                                    ->label(__('warehouse.branch.phone'))
+                                                    ->label(__('branch.phone'))
                                                     ->tel()
                                                     ->maxLength(11),
                                                 
                                                 Forms\Components\TextInput::make('fax')
-                                                    ->label(__('warehouse.branch.fax'))
+                                                    ->label(__('branch.fax'))
                                                     ->tel()
                                                     ->maxLength(11),
                                                 
                                                 Forms\Components\TextInput::make('postal_code')
-                                                    ->label(__('warehouse.branch.postal_code'))
+                                                    ->label(__('branch.postal_code'))
                                                     ->maxLength(10),
                                             ]),
                                         
                                         Forms\Components\Textarea::make('address')
-                                            ->label(__('warehouse.branch.address'))
+                                            ->label(__('branch.address'))
                                             ->rows(3)
                                             ->columnSpanFull(),
                                     ])
@@ -146,30 +146,30 @@ class BranchResource extends Resource
                         Tab::make(__('warehouse.branch_tabs.technical_info'))
                             ->icon('heroicon-o-wrench-screwdriver')
                             ->schema([
-                                Section::make(__('warehouse.branch.sections.communication_info'))
-                                    ->description(__('warehouse.branch.sections.communication_info_desc'))
+                                Section::make(__('branch.sections.communication_info'))
+                                    ->description(__('branch.sections.communication_info_desc'))
                                     ->icon('heroicon-o-signal')
                                     ->iconColor('warning')
                                     ->schema([
                                         Grid::make(3)
                                             ->schema([
                                                 Forms\Components\TextInput::make('vhf_address')
-                                                    ->label(__('warehouse.branch.vhf_address'))
+                                                    ->label(__('branch.vhf_address'))
                                                     ->maxLength(20),
                                                 
                                                 Forms\Components\TextInput::make('hf_address')
-                                                    ->label(__('warehouse.branch.hf_address'))
+                                                    ->label(__('branch.hf_address'))
                                                     ->maxLength(20),
                                                 
                                                 Forms\Components\TextInput::make('vhf_channel')
-                                                    ->label(__('warehouse.branch.vhf_channel'))
+                                                    ->label(__('branch.vhf_channel'))
                                                     ->maxLength(20),
                                             ]),
                                     ])
                                     ->collapsible(),
 
-                                Section::make(__('warehouse.branch.sections.geographic_info'))
-                                    ->description(__('warehouse.branch.sections.geographic_info_desc'))
+                                Section::make(__('branch.sections.geographic_info'))
+                                    ->description(__('branch.sections.geographic_info_desc'))
                                     ->icon('heroicon-o-map-pin')
                                     ->iconColor('info')
                                     ->schema([
@@ -198,7 +198,7 @@ class BranchResource extends Resource
                                         Grid::make(2)
                                             ->schema([
                                                 Forms\Components\TextInput::make('lat')
-                                                    ->label(__('warehouse.branch.lat'))
+                                                    ->label(__('branch.lat'))
                                                     ->numeric()
                                                     ->step(0.0000001)
                                                     ->live()
@@ -207,7 +207,7 @@ class BranchResource extends Resource
                                                     }),
                                                 
                                                 Forms\Components\TextInput::make('lon')
-                                                    ->label(__('warehouse.branch.lon'))
+                                                    ->label(__('branch.lon'))
                                                     ->numeric()
                                                     ->step(0.0000001)
                                                     ->live()
@@ -215,34 +215,34 @@ class BranchResource extends Resource
                                                         $set('branch_location.lng', $state);
                                                     }),
                                                 Forms\Components\TextInput::make('lat_deg')
-                                                    ->label(__('warehouse.branch.lat_deg'))
+                                                    ->label(__('branch.lat_deg'))
                                                     ->numeric(),
                                                 
                                                 Forms\Components\TextInput::make('lat_min')
-                                                    ->label(__('warehouse.branch.lat_min'))
+                                                    ->label(__('branch.lat_min'))
                                                     ->numeric(),
                                                 
                                                 Forms\Components\TextInput::make('lat_sec')
-                                                    ->label(__('warehouse.branch.lat_sec'))
+                                                    ->label(__('branch.lat_sec'))
                                                     ->numeric()
                                                     ->step(0.0000001),
                                                 
                                                 Forms\Components\TextInput::make('lon_deg')
-                                                    ->label(__('warehouse.branch.lon_deg'))
+                                                    ->label(__('branch.lon_deg'))
                                                     ->numeric(),
                                                 
                                                 Forms\Components\TextInput::make('lon_min')
-                                                    ->label(__('warehouse.branch.lon_min'))
+                                                    ->label(__('branch.lon_min'))
                                                     ->numeric(),
                                                 
                                                 Forms\Components\TextInput::make('lon_sec')
-                                                    ->label(__('warehouse.branch.lon_sec'))
+                                                    ->label(__('branch.lon_sec'))
                                                     ->numeric()
                                                     ->step(0.0000001),
                                             ]),
                                         
                                         Forms\Components\TextInput::make('height')
-                                            ->label(__('warehouse.branch.height'))
+                                            ->label(__('branch.height'))
                                             ->numeric()
                                             ->suffix('متر'),
                                     ])
@@ -253,53 +253,53 @@ class BranchResource extends Resource
                         Tab::make(__('warehouse.branch_tabs.additional_info'))
                             ->icon('heroicon-o-document-text')
                             ->schema([
-                                Section::make(__('warehouse.branch.sections.closure_info'))
-                                    ->description(__('warehouse.branch.sections.closure_info_desc'))
+                                Section::make(__('branch.sections.closure_info'))
+                                    ->description(__('branch.sections.closure_info_desc'))
                                     ->icon('heroicon-o-calendar-days')
                                     ->iconColor('danger')
                                     ->schema([
                                         Forms\Components\Toggle::make('closed_thursday')
-                                            ->label(__('warehouse.branch.closed_thursday'))
+                                            ->label(__('branch.closed_thursday'))
                                             ->default(false),
                                         
                                         Grid::make(2)
                                             ->schema([
                                                 Forms\Components\DatePicker::make('closure_date')
                                                     ->jalali()
-                                                    ->label(__('warehouse.branch.closure_date')),
+                                                    ->label(__('branch.closure_date')),
                                                 
                                                 Forms\Components\TextInput::make('closure_document')
-                                                    ->label(__('warehouse.branch.closure_document'))
+                                                    ->label(__('branch.closure_document'))
                                                     ->maxLength(255),
                                             ]),
                                         
                                         Grid::make(2)
                                             ->schema([
                                                 Forms\Components\TextInput::make('date_closed_thursday')
-                                                    ->label(__('warehouse.branch.date_closed_thursday'))
+                                                    ->label(__('branch.date_closed_thursday'))
                                                     ->maxLength(255),
                                                 
                                                 Forms\Components\TextInput::make('date_closed_thursday_end')
-                                                    ->label(__('warehouse.branch.date_closed_thursday_end'))
+                                                    ->label(__('branch.date_closed_thursday_end'))
                                                     ->maxLength(255),
                                             ]),
                                     ])
                                     ->collapsible(),
 
-                                Section::make(__('warehouse.branch.sections.images'))
-                                    ->description(__('warehouse.branch.sections.images_desc'))
+                                Section::make(__('branch.sections.images'))
+                                    ->description(__('branch.sections.images_desc'))
                                     ->icon('heroicon-o-photo')
                                     ->iconColor('secondary')
                                     ->schema([
                                         Grid::make(2)
                                             ->schema([
                                                 Forms\Components\FileUpload::make('img_header')
-                                                    ->label(__('warehouse.branch.img_header'))
+                                                    ->label(__('branch.img_header'))
                                                     ->image()
                                                     ->directory('branches/headers'),
                                                 
                                                 Forms\Components\FileUpload::make('img_building')
-                                                    ->label(__('warehouse.branch.img_building'))
+                                                    ->label(__('branch.img_building'))
                                                     ->image()
                                                     ->directory('branches/buildings'),
                                             ]),
@@ -317,13 +317,13 @@ class BranchResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('warehouse.branch.table.name'))
+                    ->label(__('branch.table.name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
                 
                 Tables\Columns\TextColumn::make('branch_type_name')
-                    ->label(__('warehouse.branch.table.branch_type'))
+                    ->label(__('branch.table.branch_type'))
                     ->badge()
                     ->color(fn (string $state): string => match($state) {
                         'شهرستان' => 'gray',
@@ -336,17 +336,17 @@ class BranchResource extends Resource
                     }),
                 
                 Tables\Columns\TextColumn::make('phone')
-                    ->label(__('warehouse.branch.table.phone'))
+                    ->label(__('branch.table.phone'))
                     ->searchable()
                     ->icon('heroicon-o-phone'),
                 
                 Tables\Columns\TextColumn::make('address')
-                    ->label(__('warehouse.branch.table.address'))
+                    ->label(__('branch.table.address'))
                     ->searchable()
                     ->limit(50),
                 
                 Tables\Columns\IconColumn::make('closed_thursday')
-                    ->label(__('warehouse.branch.table.closed_thursday'))
+                    ->label(__('branch.table.closed_thursday'))
                     ->boolean()
                     ->trueIcon('heroicon-o-x-circle')
                     ->falseIcon('heroicon-o-check-circle')
@@ -354,14 +354,14 @@ class BranchResource extends Resource
                     ->falseColor('success'),
                 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('warehouse.branch.table.created_at'))
+                    ->label(__('branch.table.created_at'))
                     ->dateTime('j F Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('branch_type')
-                    ->label(__('warehouse.branch.filters.branch_type'))
+                    ->label(__('branch.filters.branch_type'))
                     ->options([
                         Branch::BRANCH_TYPE_COUNTY => 'شهرستان',
                         Branch::BRANCH_TYPE_HEADQUARTERS => 'ستاد',
@@ -373,27 +373,27 @@ class BranchResource extends Resource
                     ->multiple(),
                 
                 Tables\Filters\TernaryFilter::make('closed_thursday')
-                    ->label(__('warehouse.branch.filters.closed_thursday'))
-                    ->placeholder(__('warehouse.branch.filters.all'))
-                    ->trueLabel(__('warehouse.branch.filters.closed'))
-                    ->falseLabel(__('warehouse.branch.filters.open')),
+                    ->label(__('branch.filters.closed_thursday'))
+                    ->placeholder(__('branch.filters.all'))
+                    ->trueLabel(__('branch.filters.closed'))
+                    ->falseLabel(__('branch.filters.open')),
             ])
             ->actions([
                 ViewAction::make()
-                    ->label(__('warehouse.branch.actions.view'))
+                    ->label(__('branch.actions.view'))
                     ->icon('heroicon-o-eye'),
                 EditAction::make()
-                    ->label(__('warehouse.branch.actions.edit'))
+                    ->label(__('branch.actions.edit'))
                     ->icon('heroicon-o-pencil'),
                 DeleteAction::make()
-                    ->label(__('warehouse.branch.actions.delete'))
+                    ->label(__('branch.actions.delete'))
                     ->icon('heroicon-o-trash')
                     ->requiresConfirmation(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->label(__('warehouse.branch.actions.delete_selected'))
+                        ->label(__('branch.actions.delete_selected'))
                         ->requiresConfirmation(),
                 ])
             ])

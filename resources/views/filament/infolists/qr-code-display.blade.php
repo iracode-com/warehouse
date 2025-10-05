@@ -48,10 +48,9 @@
             </button>
         </div>
     @endif
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
 // Generate QR code when page loads
 document.addEventListener('DOMContentLoaded', function() {
     const qrElement = document.getElementById('qr-code-{{ $sku }}');
@@ -148,4 +147,5 @@ function copyToClipboard(text) {
         }, 3000);
     });
 }
-</script>
+    </script>
+</div>

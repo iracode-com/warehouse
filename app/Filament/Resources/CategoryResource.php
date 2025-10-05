@@ -118,6 +118,7 @@ class CategoryResource extends Resource
                                     ->label('نوع دسته‌بندی')
                                     ->options(__('product-profile.options.category_types'))
                                     ->searchable()
+                                    ->required()
                                     ->columnSpan(1),
 
                                 Forms\Components\Toggle::make('is_leaf')

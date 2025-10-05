@@ -117,6 +117,7 @@ class ProductProfileResource extends Resource
                                     ->maxLength(255)
                                     ->disabled()
                                     ->dehydrated()
+                                    ->copyable()
                                     ->helperText(__('product-profile.fields.barcode_helper')),
 
                                 Forms\Components\TextInput::make('qr_code')
@@ -124,6 +125,7 @@ class ProductProfileResource extends Resource
                                     ->maxLength(255)
                                     ->disabled()
                                     ->dehydrated()
+                                    ->copyable()
                                     ->helperText(__('product-profile.fields.qr_code_helper')),
                             ]),
 
@@ -485,13 +487,8 @@ class ProductProfileResource extends Resource
                     ->iconColor('gray')
                     ->columnSpanFull()
                     ->schema([
-                        Forms\Components\Textarea::make('notes')
-                            ->label(__('product-profile.fields.notes'))
-                            ->rows(3),
-
-                        Forms\Components\Textarea::make('additional_description')
-                            ->label(__('product-profile.fields.additional_description'))
-                            ->rows(4),
+                        Forms\Components\KeyValue::make('specifications')
+                            ->label(__('product-profile.fields.specifications')),
                     ])
                     ->collapsible(),
             ]);
@@ -555,26 +552,18 @@ class ProductProfileResource extends Resource
                     ->color('success')
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('consumption_status')
-                    ->label(__('product-profile.table.consumption_status'))
-                    ->getStateUsing(function ($record) {
-                        return $record->consumption_status ? __('product-profile.options.consumption_statuses.' . $record->consumption_status) : '';
-                    })
-                    ->badge()
-                    ->color(fn(ProductProfile $record): string => match ($record->consumption_status) {
-                        'high_consumption' => 'success',
-                        'strategic' => 'warning',
-                        'low_consumption' => 'info',
-                        'stagnant' => 'danger',
-                        default => 'gray',
-                    })
+                Tables\Columns\ImageColumn::make('barcode_image')
+                    ->label(__('product-profile.fields.barcode'))
+                    ->getStateUsing(fn ($record) => $record->barcode_image)
+                    ->size(100)
+                    ->height(40)
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('estimated_value')
-                    ->label(__('product-profile.table.estimated_value'))
-                    ->numeric()
-                    ->sortable()
-                    ->money('IRR')
+                Tables\Columns\ImageColumn::make('qr_code_image')
+                    ->label(__('product-profile.fields.qr_code'))
+                    ->getStateUsing(fn ($record) => $record->qr_code_image)
+                    ->size(60)
+                    ->height(60)
                     ->toggleable(),
 
                 Tables\Columns\IconColumn::make('has_expiry_date')
@@ -594,11 +583,6 @@ class ProductProfileResource extends Resource
                     })
                     ->badge()
                     ->color(fn(ProductProfile $record): string => $record->status_color),
-
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label(__('product-profile.table.is_active'))
-                    ->boolean()
-                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('product-profile.table.created_at'))

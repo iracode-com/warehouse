@@ -48,10 +48,9 @@
             </button>
         </div>
     @endif
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-<script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script>
 // Generate barcode when page loads
 document.addEventListener('DOMContentLoaded', function() {
     const barcodeElement = document.getElementById('barcode-{{ $sku }}');
@@ -138,4 +137,5 @@ function copyToClipboard(text) {
         }, 3000);
     });
 }
-</script>
+    </script>
+</div>
