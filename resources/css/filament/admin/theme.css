@@ -9,3 +9,7 @@
 .fi-topbar-ctn{
     z-index: 999999;
 }
+
+.fi-sidebar-header{
+    display: none;
+}
