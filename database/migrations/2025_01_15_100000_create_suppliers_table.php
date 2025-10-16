@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('phone')->nullable()->comment('تلفن');
             $table->string('mobile')->nullable()->comment('موبایل');
             $table->text('address')->nullable()->comment('آدرس');
-            $table->foreignId('province_id')->nullable()->constrained('provinces')->nullOnDelete()->comment('استان');
-            $table->foreignId('city_id')->nullable()->constrained('cities')->nullOnDelete()->comment('شهر');
-            $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete()->comment('کشور');
+            $table->foreignId('province_id')->nullable()->constrained('regions')->nullOnDelete()->comment('استان');
+            $table->foreignId('city_id')->nullable()->constrained('regions')->nullOnDelete()->comment('شهر');
+            $table->foreignId('country_id')->nullable()->constrained('regions')->nullOnDelete()->comment('کشور');
             $table->string('postal_code')->nullable()->comment('کد پستی');
             $table->string('website')->nullable()->comment('وب‌سایت');
             $table->text('notes')->nullable()->comment('یادداشت‌ها');

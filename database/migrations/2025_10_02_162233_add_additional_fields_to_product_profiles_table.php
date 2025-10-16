@@ -71,7 +71,7 @@ return new class extends Migration
             $table->json('related_warehouses')->nullable()->after('annual_inflation_rate')->comment('انبارهای مرتبط');
             
             // توضیحات اضافی
-            $table->text('additional_description')->nullable()->after('notes')->comment('توضیحات اضافی');
+            $table->text('additional_description')->nullable()->after('related_warehouses')->comment('توضیحات اضافی');
         });
     }
 
