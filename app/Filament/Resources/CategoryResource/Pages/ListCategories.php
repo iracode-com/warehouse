@@ -21,7 +21,7 @@ class ListCategories extends ListRecords
     protected function getFooterWidgets(): array
     {
         return [
-            // CategoryTreeWidget::class,
+            // \App\Filament\Widgets\CategoryWidget::class,
         ];
     }
 }

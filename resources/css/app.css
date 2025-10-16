@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@import '../../vendor/solution-forest/filament-tree/resources/css/jquery.nestable.css';
+@import '../../vendor/solution-forest/filament-tree/resources/css/button.css';
+@import '../../vendor/solution-forest/filament-tree/resources/css/custom-nestable-item.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

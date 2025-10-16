@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\GoodsReceipts;
 
-use App\Filament\Resources\DocumentResource\Pages;
+use App\Filament\Resources\GoodsReceipts\Pages;
 use App\Models\Document;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -17,7 +17,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
-class DocumentResource extends Resource
+class GoodsReceiptResource extends Resource
 {
     protected static ?string $model = Document::class;
 
@@ -28,22 +28,22 @@ class DocumentResource extends Resource
 
     public static function getNavigationIcon(): ?string
     {
-        return 'heroicon-o-document-text';
+        return 'heroicon-o-arrow-down-tray';
     }
 
     public static function getNavigationLabel(): string
     {
-        return 'اسناد';
+        return 'رسید کالا';
     }
 
     public static function getModelLabel(): string
     {
-        return 'سند';
+        return 'رسید کالا';
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'اسناد';
+        return 'رسیدهای کالا';
     }
 
     public static function getNavigationSort(): ?int
@@ -56,31 +56,25 @@ class DocumentResource extends Resource
         return $schema
             ->schema([
                 Section::make('اطلاعات سند')
-                    ->description('اطلاعات پایه سند')
-                    ->icon('heroicon-o-document-text')
-                    ->iconColor('primary')
+                    ->description('اطلاعات پایه رسید کالا')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->iconColor('success')
                     ->collapsible()
                     ->collapsed(false)
                     ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('document_number')
-                            ->label('شماره سند')
-                            ->default(fn () => 'DOC-'.\Morilog\Jalali\Jalalian::forge('today')->format('Ymd').'-'.(now()->hour * 3600 + now()->minute * 60 + now()->second).'-'.rand(1000, 9999))
+                            ->label('شماره رسید')
+                            ->default(fn () => 'REC-'.\Morilog\Jalali\Jalalian::forge('today')->format('Ymd').'-'.(now()->hour * 3600 + now()->minute * 60 + now()->second).'-'.rand(1000, 9999))
                             ->disabled()
                             ->dehydrated(),
 
                         Forms\Components\DatePicker::make('document_date')
-                            ->label('تاریخ سند')
+                            ->label('تاریخ رسید')
                             ->default(now())
                             ->jalali()
                             ->required(),
-
-                        Forms\Components\Select::make('document_type')
-                            ->label('نوع سند')
-                            ->options(Document::getTypeOptions())
-                            ->required()
-                            ->live(),
 
                         Forms\Components\Select::make('status')
                             ->label('وضعیت')
@@ -90,30 +84,21 @@ class DocumentResource extends Resource
                     ]),
 
                 Section::make('اطلاعات انبار')
-                    ->description('انبار مبدا و مقصد')
+                    ->description('انبار مقصد')
                     ->icon('heroicon-o-building-office-2')
                     ->iconColor('info')
                     ->collapsible()
                     ->collapsed(false)
                     ->columnSpanFull()
-                    ->columns(3)
-                    ->visible(fn ($get) => in_array($get('document_type'), [Document::TYPE_ISSUE, Document::TYPE_TRANSFER]) ||
-                        in_array($get('document_type'), [Document::TYPE_RECEIPT, Document::TYPE_TRANSFER])
-                    )
+                    ->columns(2)
                     ->schema([
-                        Forms\Components\Select::make('source_warehouse_id')
-                            ->label('انبار مبدا')
-                            ->relationship('sourceWarehouse', 'title')
-                            ->searchable()
-                            ->preload()
-                            ->visible(fn ($get) => in_array($get('document_type'), [Document::TYPE_ISSUE, Document::TYPE_TRANSFER])),
-
                         Forms\Components\Select::make('destination_warehouse_id')
                             ->label('انبار مقصد')
                             ->relationship('destinationWarehouse', 'title')
                             ->searchable()
                             ->preload()
-                            ->visible(fn ($get) => in_array($get('document_type'), [Document::TYPE_RECEIPT, Document::TYPE_TRANSFER])),
+                            ->required()
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('اطلاعات طرف حساب')
@@ -123,7 +108,7 @@ class DocumentResource extends Resource
                     ->collapsible()
                     ->collapsed(false)
                     ->columnSpanFull()
-                    ->visible(fn ($get) => in_array($get('document_type'), [Document::TYPE_RECEIPT, Document::TYPE_ISSUE]))
+                    ->columns(3)
                     ->schema([
                         Forms\Components\Select::make('supplier_id')
                             ->label('تامین‌کننده')
@@ -165,7 +150,7 @@ class DocumentResource extends Resource
                     ]),
 
                 Section::make('اقلام کالا')
-                    ->description('کالاهای موجود در این سند')
+                    ->description('کالاهای دریافتی')
                     ->icon('heroicon-o-cube')
                     ->iconColor('success')
                     ->collapsible()
@@ -179,7 +164,8 @@ class DocumentResource extends Resource
                                 Forms\Components\Select::make('product_profile_id')
                                     ->label('پروفایل کالا')
                                     ->relationship('productProfile', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->name.' | SKU: '.($record->sku ?? '-').' | برند: '.($record->brand ?? '-')
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => 
+                                        $record->name . ' | SKU: ' . ($record->sku ?? '-') . ' | برند: ' . ($record->brand ?? '-')
                                     )
                                     ->required()
                                     ->searchable(['name', 'sku', 'brand'])
@@ -295,8 +281,8 @@ class DocumentResource extends Resource
                             ->collapsible()
                             ->collapsed(false)
                             ->itemLabel(fn (array $state): ?string => $state['product_profile_id']
-                                ? (\App\Models\ProductProfile::find($state['product_profile_id'])?->name ?? 'پروفایل کالا').
-                                  ' ('.number_format($state['quantity'] ?? 0, 2).')'
+                                ? (\App\Models\ProductProfile::find($state['product_profile_id'])?->name ?? 'پروفایل کالا') .
+                                  ' (' . number_format($state['quantity'] ?? 0, 2) . ')'
                                 : 'کالا جدید'
                             )
                             ->columnSpanFull(),
@@ -359,7 +345,7 @@ class DocumentResource extends Resource
                     ->columnSpanFull()
                     ->schema([
                         Forms\Components\Textarea::make('description')
-                            ->label('شرح سند')
+                            ->label('شرح رسید')
                             ->rows(3)
                             ->columnSpanFull(),
 
@@ -376,37 +362,21 @@ class DocumentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->where('document_type', Document::TYPE_RECEIPT))
             ->columns([
                 Tables\Columns\TextColumn::make('document_number')
-                    ->label('شماره سند')
+                    ->label('شماره رسید')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('document_type')
-                    ->label('نوع سند')
-                    ->formatStateUsing(fn ($state) => Document::getTypeOptions()[$state] ?? $state)
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'receipt' => 'success',
-                        'issue' => 'danger',
-                        'transfer' => 'info',
-                        'adjustment' => 'gray',
-                        default => 'gray',
-                    }),
-
                 Tables\Columns\TextColumn::make('document_date')
-                    ->label('تاریخ سند')
+                    ->label('تاریخ رسید')
                     ->jalaliDateTime()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label('تامین‌کننده')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-
-                Tables\Columns\TextColumn::make('sourceWarehouse.title')
-                    ->label('انبار مبدا')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('destinationWarehouse.title')
@@ -442,19 +412,9 @@ class DocumentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('document_type')
-                    ->label('نوع سند')
-                    ->options(Document::getTypeOptions()),
-
                 Tables\Filters\SelectFilter::make('status')
                     ->label('وضعیت')
                     ->options(Document::getStatusOptions()),
-
-                Tables\Filters\SelectFilter::make('source_warehouse_id')
-                    ->label('انبار مبدا')
-                    ->relationship('sourceWarehouse', 'title')
-                    ->searchable()
-                    ->preload(),
 
                 Tables\Filters\SelectFilter::make('destination_warehouse_id')
                     ->label('انبار مقصد')
@@ -483,9 +443,19 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListGoodsReceipts::route('/'),
+            'create' => Pages\CreateGoodsReceipt::route('/create'),
+            'edit' => Pages\EditGoodsReceipt::route('/{record}/edit'),
         ];
+    }
+
+    protected static function getRedirectAfterCreate(): string
+    {
+        return static::getUrl('index');
+    }
+
+    protected static function getRedirectAfterEdit(): string
+    {
+        return static::getUrl('index');
     }
 }

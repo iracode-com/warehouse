@@ -41,11 +41,16 @@ class Document extends Model
         'document_date',
         'source_warehouse_id',
         'destination_warehouse_id',
+        'supplier_id',
         'party_type',
         'party_name',
         'party_code',
         'party_address',
         'party_phone',
+        'delivery_first_name',
+        'delivery_last_name',
+        'delivery_mobile',
+        'delivery_receipt_image',
         'reference_number',
         'invoice_number',
         'invoice_date',
@@ -171,6 +176,14 @@ class Document extends Model
     public function destinationWarehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'destination_warehouse_id');
+    }
+
+    /**
+     * Supplier relationship
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     /**

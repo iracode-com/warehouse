@@ -2,14 +2,12 @@
 
 namespace App\Enums;
 
-use App\Traits\BaseEnum;
 use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum RoleEnum: string implements HasLabel, HasColor
 {
-    use BaseEnum;
 
     case SUPER_ADMIN           = 'super_admin';
     case TECHNICAL_EXPERT      = 'technical_expert';

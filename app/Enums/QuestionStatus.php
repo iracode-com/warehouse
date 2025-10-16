@@ -2,13 +2,11 @@
 
 namespace App\Enums;
 
-use App\Traits\BaseEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum QuestionStatus: int implements HasLabel, HasColor
 {
-    use BaseEnum;
 
     case COMPLETING_INFORMATION                                          = 0;
     case REVIEW_BY_TECHNICAL_EXPERT                                      = 1;

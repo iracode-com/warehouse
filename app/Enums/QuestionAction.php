@@ -5,12 +5,10 @@ namespace App\Enums;
 use App\Filament\Resources\Question\FirstAuditResource;
 use App\Filament\Resources\Question\SecondAuditResource;
 use App\Filament\Resources\Question\ServiceRequestResource;
-use App\Traits\BaseEnum;
 use Filament\Support\Contracts\HasLabel;
 
 enum QuestionAction: int implements HasLabel
 {
-    use BaseEnum;
 
     case TECHNICAL_QUESTIONNAIRE  = 0;
     case AUDIT_DURATION           = 1;

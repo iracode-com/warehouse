@@ -5,7 +5,6 @@ namespace App\Enums;
 use App\Filament\Resources\Question\FirstAuditResource\Pages\CreateFirstAudit;
 use App\Filament\Resources\Question\SecondAuditResource\Pages\CreateSecondAudit;
 use App\Filament\Resources\Question\ServiceRequestResource\Pages\CreateServiceRequest;
-use App\Traits\BaseEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
@@ -13,7 +12,6 @@ use Illuminate\Support\Facades\Vite;
 
 enum QuestionTypes: int implements HasLabel, HasDescription, HasColor
 {
-    use BaseEnum;
 
     case SERVICE_REQUEST = 0;
     case FIRST_AUDIT     = 1;
