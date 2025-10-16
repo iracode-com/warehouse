@@ -4,12 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemResource\Pages;
 use App\Models\Item;
-use App\Models\ProductProfile;
-use App\Models\Warehouse;
-use App\Models\Location\Zone;
+use App\Models\Location\Pallet;
 use App\Models\Location\Rack;
 use App\Models\Location\ShelfLevel;
-use App\Models\Location\Pallet;
+use App\Models\Location\Zone;
+use App\Models\ProductProfile;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
@@ -17,10 +20,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 
 class ItemResource extends Resource
 {
@@ -83,15 +82,35 @@ class ItemResource extends Resource
                     ->iconColor('success')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('serial_number')
                                     ->label(__('item.fields.serial_number'))
                                     ->maxLength(255)
                                     ->required()
                                     ->unique(ignoreRecord: true)
-                                    ->helperText(__('item.fields.serial_number_helper')),
+                                    ->helperText(__('item.fields.serial_number_helper'))
+                                    ->columnSpan(1),
 
+                                Forms\Components\TextInput::make('barcode')
+                                    ->label('بارکد')
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->prefixIcon('heroicon-o-qr-code')
+                                    ->helperText('بارکد منحصر به فرد کالا')
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('qr_code')
+                                    ->label('QR Code')
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->prefixIcon('heroicon-o-qr-code')
+                                    ->helperText('QR Code منحصر به فرد کالا')
+                                    ->columnSpan(1),
+                            ]),
+
+                        Grid::make(1)
+                            ->schema([
                                 Forms\Components\Select::make('status')
                                     ->label(__('item.fields.status'))
                                     ->options(__('item.status_options'))
@@ -100,6 +119,17 @@ class ItemResource extends Resource
                                     ->helperText(__('item.fields.status_helper')),
                             ]),
                     ]),
+
+                Forms\Components\Select::make('source_document_id')
+                    ->label('سند مبدا')
+                    ->relationship('sourceDocument', 'document_number')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->document_number.' - '.$record->getTypeLabelAttribute().' ('.$record->document_date->format('Y/m/d').')'
+                    )
+                    ->searchable(['document_number'])
+                    ->preload()
+                    ->placeholder('انتخاب سند مبدا (اختیاری)')
+                    ->helperText('مشخص می‌کند این قلم از کدام سند ورودی آمده')
+                    ->columnSpanFull(),
 
                 Section::make(__('item.sections.inventory_pricing'))
                     ->description(__('item.sections.inventory_pricing_desc'))
@@ -256,6 +286,18 @@ class ItemResource extends Resource
                     ->label(__('item.table.serial_number'))
                     ->searchable()
                     ->toggleable(),
+
+                Tables\Columns\ViewColumn::make('barcode')
+                    ->label('بارکد')
+                    ->view('filament.tables.columns.barcode')
+                    ->toggleable()
+                    ->searchable(),
+
+                Tables\Columns\ViewColumn::make('qr_code')
+                    ->label('QR Code')
+                    ->view('filament.tables.columns.qr-code')
+                    ->toggleable()
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('current_stock')
                     ->label(__('item.table.current_stock'))

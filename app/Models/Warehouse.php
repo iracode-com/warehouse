@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Location\Province;
 use App\Models\Location\City;
+use App\Models\Location\Province;
 use App\Models\Location\Town;
 use App\Models\Location\Village;
 use App\Models\Location\Zone;
-use App\Models\WarehouseUsageType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Warehouse extends Model
 {
@@ -21,12 +20,16 @@ class Warehouse extends Model
 
     // Status constants
     const STATUS_ACTIVE = 1;
+
     const STATUS_INACTIVE = 0;
 
     // Approved grade constants
     const GRADE_1 = '1';
+
     const GRADE_2 = '2';
+
     const GRADE_3 = '3';
+
     const GRADE_SPECIAL = 'special';
 
     /**
@@ -56,6 +59,7 @@ class Warehouse extends Model
     protected $fillable = [
         'shed_id',
         'branch_id',
+        'base_id',
         'province_id',
         'city_id',
         'town_id',
@@ -150,7 +154,7 @@ class Warehouse extends Model
 
     public function getUsageTypeLabelAttribute(): string
     {
-        return match($this->usage_type) {
+        return match ($this->usage_type) {
             'emergency' => 'امدادی',
             'scrap_used' => 'اسقاط و مستعمل (غیرامدادی)',
             'auto_parts' => 'لوازم و قطعات یدکی خودرو',
@@ -164,7 +168,7 @@ class Warehouse extends Model
 
     public function getOwnershipTypeLabelAttribute(): string
     {
-        return match($this->ownership_type) {
+        return match ($this->ownership_type) {
             'owned' => 'مالکیتی',
             'rented' => 'استیجاری',
             'donated' => 'اهدا',
@@ -174,7 +178,7 @@ class Warehouse extends Model
 
     public function getStructureTypeLabelAttribute(): string
     {
-        return match($this->structure_type) {
+        return match ($this->structure_type) {
             'concrete' => 'بتنی',
             'metal' => 'فلزی',
             'prefabricated' => 'پیش‌ساخته',
@@ -184,7 +188,7 @@ class Warehouse extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_ACTIVE => 'فعال',
             self::STATUS_INACTIVE => 'غیرفعال',
             default => $this->status,
@@ -193,7 +197,7 @@ class Warehouse extends Model
 
     public function getApprovedGradeLabelAttribute(): string
     {
-        return match($this->approved_grade) {
+        return match ($this->approved_grade) {
             self::GRADE_1 => 'درجه 1',
             self::GRADE_2 => 'درجه 2',
             self::GRADE_3 => 'درجه 3',
@@ -205,6 +209,11 @@ class Warehouse extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function base(): BelongsTo
+    {
+        return $this->belongsTo(Base::class);
     }
 
     public function province(): BelongsTo
@@ -305,5 +314,23 @@ class Warehouse extends Model
     public function racks(): HasMany
     {
         return $this->hasMany(Rack::class);
+    }
+
+    /**
+     * Get the personnel (warehousemen) for this warehouse.
+     */
+    public function personnel(): BelongsToMany
+    {
+        return $this->belongsToMany(Personnel::class, 'warehouse_personnel')
+            ->withPivot('role', 'is_active')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get active personnel for this warehouse.
+     */
+    public function activePersonnel(): BelongsToMany
+    {
+        return $this->personnel()->wherePivot('is_active', true);
     }
 }

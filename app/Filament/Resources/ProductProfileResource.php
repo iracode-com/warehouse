@@ -4,21 +4,19 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductProfileResource\Pages;
 use App\Models\ProductProfile;
-use App\Models\Category;
-use App\Models\Warehouse;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 
 class ProductProfileResource extends Resource
 {
@@ -154,31 +152,66 @@ class ProductProfileResource extends Resource
                     ])
                     ->collapsible(),
 
-
                 Section::make(__('product-profile.sections.units_pricing'))
                     ->description(__('product-profile.sections.units_pricing_desc'))
                     ->icon('heroicon-o-scale')
                     ->iconColor('success')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(3)
                             ->schema([
-                                // Forms\Components\Select::make('unit_of_measure')
-                                //     ->label(__('product-profile.fields.unit_of_measure'))
-                                //     ->options(__('product-profile.options.units'))
-                                //     ->searchable(),
+                                Forms\Components\Select::make('unit_of_measure_id')
+                                    ->label(__('product-profile.fields.unit_of_measure'))
+                                    ->relationship('unitOfMeasure', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('نام واحد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('code')
+                                            ->label('کد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('symbol')
+                                            ->label('نماد'),
+                                    ])
+                                    ->prefixIcon('heroicon-o-scale'),
 
-                                Forms\Components\Select::make('primary_unit')
+                                Forms\Components\Select::make('primary_unit_id')
                                     ->label(__('product-profile.fields.primary_unit'))
                                     ->required()
-                                    ->options(__('product-profile.options.units'))
-                                    ->searchable(),
+                                    ->relationship('primaryUnit', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('نام واحد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('code')
+                                            ->label('کد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('symbol')
+                                            ->label('نماد'),
+                                    ])
+                                    ->prefixIcon('heroicon-o-scale'),
 
-                                Forms\Components\Select::make('secondary_unit')
+                                Forms\Components\Select::make('secondary_unit_id')
                                     ->label(__('product-profile.fields.secondary_unit'))
                                     ->required()
-                                    ->options(__('product-profile.options.units'))
-                                    ->searchable(),
+                                    ->relationship('secondaryUnit', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('نام واحد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('code')
+                                            ->label('کد')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('symbol')
+                                            ->label('نماد'),
+                                    ])
+                                    ->prefixIcon('heroicon-o-scale'),
                             ]),
 
                         Grid::make(2)
@@ -339,19 +372,19 @@ class ProductProfileResource extends Resource
                         Forms\Components\Textarea::make('technical_specs')
                             ->label(__('product-profile.fields.technical_specs'))
                             ->rows(4)
-                            ->visible(fn($get): bool => $get('has_technical_specs'))
+                            ->visible(fn ($get): bool => $get('has_technical_specs'))
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('storage_conditions')
                             ->label(__('product-profile.fields.storage_conditions'))
                             ->rows(4)
-                            ->visible(fn($get): bool => $get('has_storage_conditions'))
+                            ->visible(fn ($get): bool => $get('has_storage_conditions'))
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('inspection_details')
                             ->label(__('product-profile.fields.inspection_details'))
                             ->rows(4)
-                            ->visible(fn($get): bool => $get('has_inspection'))
+                            ->visible(fn ($get): bool => $get('has_inspection'))
                             ->columnSpanFull(),
                     ])
                     ->collapsible(),
@@ -375,7 +408,7 @@ class ProductProfileResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->visible(fn($get): bool => $get('has_similar_products'))
+                            ->visible(fn ($get): bool => $get('has_similar_products'))
                             ->columnSpanFull(),
 
                         // Grid::make(2)
@@ -508,7 +541,7 @@ class ProductProfileResource extends Resource
                     ->label(__('product-profile.table.name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn(ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
+                    ->description(fn (ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
 
                 Tables\Columns\TextColumn::make('category.name')
                     ->label(__('product-profile.table.category'))
@@ -521,7 +554,7 @@ class ProductProfileResource extends Resource
                     ->label(__('product-profile.table.category_type'))
                     ->getStateUsing(function ($record) {
                         return $record->category && $record->category->category_type ?
-                            __('product-profile.options.category_types.' . $record->category->category_type) : '';
+                            __('product-profile.options.category_types.'.$record->category->category_type) : '';
                     })
                     ->badge()
                     ->color('warning')
@@ -535,11 +568,10 @@ class ProductProfileResource extends Resource
                     ->color('info')
                     ->toggleable(),
 
-
                 Tables\Columns\TextColumn::make('product_type')
                     ->label(__('product-profile.table.product_type'))
                     ->getStateUsing(function ($record) {
-                        return $record->product_type ? __('product-profile.options.product_types.' . $record->product_type) : '';
+                        return $record->product_type ? __('product-profile.options.product_types.'.$record->product_type) : '';
                     })
                     ->badge()
                     ->toggleable(),
@@ -582,7 +614,7 @@ class ProductProfileResource extends Resource
                         return $record->status_label;
                     })
                     ->badge()
-                    ->color(fn(ProductProfile $record): string => $record->status_color),
+                    ->color(fn (ProductProfile $record): string => $record->status_color),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('product-profile.table.created_at'))
@@ -612,7 +644,6 @@ class ProductProfileResource extends Resource
                     ->relationship('brand', 'name')
                     ->searchable()
                     ->preload(),
-
 
                 Tables\Filters\SelectFilter::make('product_type')
                     ->label(__('product-profile.filters.product_type'))

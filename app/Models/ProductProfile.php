@@ -13,7 +13,9 @@ class ProductProfile extends Model
 
     // Status constants
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_INACTIVE = 'inactive';
+
     public const STATUS_DISCONTINUED = 'discontinued';
 
     protected $fillable = [
@@ -34,8 +36,11 @@ class ProductProfile extends Model
         'height',
         'volume',
         'unit_of_measure',
+        'unit_of_measure_id',
         'primary_unit',
+        'primary_unit_id',
         'secondary_unit',
+        'secondary_unit_id',
         'manufacturer',
         'country_of_origin',
         'shelf_life_days',
@@ -181,7 +186,7 @@ class ProductProfile extends Model
     // Accessors
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_ACTIVE => 'فعال',
             self::STATUS_INACTIVE => 'غیرفعال',
             self::STATUS_DISCONTINUED => 'متوقف شده',
@@ -191,7 +196,7 @@ class ProductProfile extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_ACTIVE => 'success',
             self::STATUS_INACTIVE => 'warning',
             self::STATUS_DISCONTINUED => 'gray',
@@ -202,15 +207,15 @@ class ProductProfile extends Model
     public function getFullNameAttribute(): string
     {
         $parts = [$this->name];
-        
+
         if ($this->brand) {
             $parts[] = "({$this->brand})";
         }
-        
+
         if ($this->model) {
             $parts[] = "مدل {$this->model}";
         }
-        
+
         return implode(' ', $parts);
     }
 
@@ -218,6 +223,21 @@ class ProductProfile extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function unitOfMeasure(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_of_measure_id');
+    }
+
+    public function primaryUnit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'primary_unit_id');
+    }
+
+    public function secondaryUnit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'secondary_unit_id');
     }
 
     public function packagingType(): BelongsTo
@@ -238,65 +258,65 @@ class ProductProfile extends Model
     // Helper methods
     public function getBarcodeImageAttribute(): ?string
     {
-        if (!$this->barcode) {
+        if (! $this->barcode) {
             return null;
         }
-        
+
         // تولید بارکد به صورت SVG
         $barcode = $this->barcode;
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60">';
         $svg .= '<rect width="200" height="60" fill="white" stroke="black" stroke-width="1"/>';
-        
+
         // تولید بارکد ساده (خطوط عمودی)
         $x = 10;
         for ($i = 0; $i < strlen($barcode); $i++) {
             $height = ($i % 2 == 0) ? 40 : 30;
-            $svg .= '<rect x="' . $x . '" y="10" width="2" height="' . $height . '" fill="black"/>';
+            $svg .= '<rect x="'.$x.'" y="10" width="2" height="'.$height.'" fill="black"/>';
             $x += 2;
         }
-        
+
         // نمایش متن بارکد
-        $svg .= '<text x="100" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="black">' . $barcode . '</text>';
+        $svg .= '<text x="100" y="55" text-anchor="middle" font-family="monospace" font-size="8" fill="black">'.$barcode.'</text>';
         $svg .= '</svg>';
-        
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+
+        return 'data:image/svg+xml;base64,'.base64_encode($svg);
     }
 
     public function getQrCodeImageAttribute(): ?string
     {
-        if (!$this->qr_code) {
+        if (! $this->qr_code) {
             return null;
         }
-        
+
         // تولید QR code ساده به صورت SVG
         $qrCode = $this->qr_code;
         $size = 150;
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $size . '" height="' . $size . '" viewBox="0 0 ' . $size . ' ' . $size . '">';
-        $svg .= '<rect width="' . $size . '" height="' . $size . '" fill="white" stroke="black" stroke-width="1"/>';
-        
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'.$size.'" height="'.$size.'" viewBox="0 0 '.$size.' '.$size.'">';
+        $svg .= '<rect width="'.$size.'" height="'.$size.'" fill="white" stroke="black" stroke-width="1"/>';
+
         // تولید الگوی QR code ساده
         $cellSize = 5;
         $cells = $size / $cellSize;
-        
+
         for ($i = 0; $i < $cells; $i++) {
             for ($j = 0; $j < $cells; $j++) {
                 if (($i + $j) % 3 == 0 || ($i * $j) % 7 == 0) {
                     $x = $i * $cellSize;
                     $y = $j * $cellSize;
-                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $cellSize . '" height="' . $cellSize . '" fill="black"/>';
+                    $svg .= '<rect x="'.$x.'" y="'.$y.'" width="'.$cellSize.'" height="'.$cellSize.'" fill="black"/>';
                 }
             }
         }
-        
+
         // اضافه کردن مربع‌های گوشه
         $cornerSize = 15;
-        $svg .= '<rect x="5" y="5" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
-        $svg .= '<rect x="' . ($size - $cornerSize - 5) . '" y="5" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
-        $svg .= '<rect x="5" y="' . ($size - $cornerSize - 5) . '" width="' . $cornerSize . '" height="' . $cornerSize . '" fill="black"/>';
-        
+        $svg .= '<rect x="5" y="5" width="'.$cornerSize.'" height="'.$cornerSize.'" fill="black"/>';
+        $svg .= '<rect x="'.($size - $cornerSize - 5).'" y="5" width="'.$cornerSize.'" height="'.$cornerSize.'" fill="black"/>';
+        $svg .= '<rect x="5" y="'.($size - $cornerSize - 5).'" width="'.$cornerSize.'" height="'.$cornerSize.'" fill="black"/>';
+
         $svg .= '</svg>';
-        
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+
+        return 'data:image/svg+xml;base64,'.base64_encode($svg);
     }
 
     public static function generateSKU(int $categoryId): string
@@ -304,33 +324,33 @@ class ProductProfile extends Model
         // تولید کد کالا بر اساس دسته‌بندی و شماره ترتیبی
         $category = Category::find($categoryId);
         $categoryCode = $category ? str_pad($categoryId, 3, '0', STR_PAD_LEFT) : '000';
-        
+
         // یافتن آخرین شماره ترتیبی در این دسته‌بندی
         $lastProduct = static::where('category_id', $categoryId)
-            ->where('sku', 'like', $categoryCode . '%')
+            ->where('sku', 'like', $categoryCode.'%')
             ->orderBy('sku', 'desc')
             ->first();
-        
+
         if ($lastProduct) {
             $lastNumber = (int) substr($lastProduct->sku, 3);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
-        
-        return $categoryCode . str_pad($newNumber, 6, '0', STR_PAD_LEFT);
+
+        return $categoryCode.str_pad($newNumber, 6, '0', STR_PAD_LEFT);
     }
 
     public static function generateBarcode(string $sku): string
     {
         // تولید بارکد بر اساس SKU
-        return '2' . str_pad($sku, 12, '0', STR_PAD_LEFT);
+        return '2'.str_pad($sku, 12, '0', STR_PAD_LEFT);
     }
 
     public static function generateQRCode(string $sku): string
     {
         // تولید QR Code بر اساس SKU
-        return 'QR' . $sku . date('Ymd');
+        return 'QR'.$sku.date('Ymd');
     }
 
     public function getCustomAttribute(string $key, $default = null)
@@ -348,6 +368,7 @@ class ProductProfile extends Model
     public function getImageUrl(int $index = 0): ?string
     {
         $images = $this->images ?? [];
+
         return $images[$index] ?? null;
     }
 
@@ -365,6 +386,11 @@ class ProductProfile extends Model
         $this->update(['images' => array_values($images)]);
     }
 
+    public function productSets(): HasMany
+    {
+        return $this->hasMany(ProductSet::class);
+    }
+
     public function copyProduct(string $newName, ?string $newSku = null): static
     {
         $newProduct = $this->replicate();
@@ -375,7 +401,7 @@ class ProductProfile extends Model
         $newProduct->created_at = now();
         $newProduct->updated_at = now();
         $newProduct->save();
-        
+
         return $newProduct;
     }
 
@@ -394,10 +420,10 @@ class ProductProfile extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('sku', 'like', "%{$search}%")
-              ->orWhere('barcode', 'like', "%{$search}%")
-              ->orWhere('brand', 'like', "%{$search}%")
-              ->orWhere('model', 'like', "%{$search}%");
+                ->orWhere('sku', 'like', "%{$search}%")
+                ->orWhere('barcode', 'like', "%{$search}%")
+                ->orWhere('brand', 'like', "%{$search}%")
+                ->orWhere('model', 'like', "%{$search}%");
         });
     }
 }

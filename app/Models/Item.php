@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Location\Pallet;
+use App\Models\Location\Rack;
+use App\Models\Location\ShelfLevel;
+use App\Models\Location\Zone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Location\Zone;
-use App\Models\Location\Rack;
-use App\Models\Location\ShelfLevel;
-use App\Models\Location\Pallet;
-use App\Models\ProductProfile;
 
 class Item extends Model
 {
@@ -19,13 +17,19 @@ class Item extends Model
 
     // Status constants
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_INACTIVE = 'inactive';
+
     public const STATUS_DISCONTINUED = 'discontinued';
+
     public const STATUS_RECALLED = 'recalled';
 
     protected $fillable = [
         'product_profile_id',
+        'source_document_id', // Added
         'serial_number',
+        'barcode',
+        'qr_code',
         'current_stock',
         'min_stock',
         'max_stock',
@@ -34,6 +38,8 @@ class Item extends Model
         'status',
         'manufacture_date',
         'expiry_date',
+        'production_date',
+        'batch_number',
         'purchase_date',
         'warehouse_id',
         'zone_id',
@@ -60,7 +66,7 @@ class Item extends Model
 
     public function getStatusLabelAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_ACTIVE => 'فعال',
             self::STATUS_INACTIVE => 'غیرفعال',
             self::STATUS_DISCONTINUED => 'متوقف شده',
@@ -71,7 +77,7 @@ class Item extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_ACTIVE => 'success',
             self::STATUS_INACTIVE => 'warning',
             self::STATUS_DISCONTINUED => 'gray',
@@ -95,7 +101,7 @@ class Item extends Model
 
     public function getStockStatusLabelAttribute(): string
     {
-        return match($this->stock_status) {
+        return match ($this->stock_status) {
             'out_of_stock' => 'ناموجود',
             'low_stock' => 'موجودی کم',
             'overstock' => 'موجودی زیاد',
@@ -106,7 +112,7 @@ class Item extends Model
 
     public function getStockStatusColorAttribute(): string
     {
-        return match($this->stock_status) {
+        return match ($this->stock_status) {
             'out_of_stock' => 'danger',
             'low_stock' => 'warning',
             'overstock' => 'info',
@@ -128,7 +134,7 @@ class Item extends Model
     public function getFullLocationAttribute(): string
     {
         $location = [];
-        
+
         if ($this->warehouse) {
             $location[] = $this->warehouse->title;
         }
@@ -144,7 +150,7 @@ class Item extends Model
         if ($this->pallet) {
             $location[] = $this->pallet->name;
         }
-        
+
         return implode(' > ', $location);
     }
 
@@ -188,6 +194,11 @@ class Item extends Model
     public function productProfile(): BelongsTo
     {
         return $this->belongsTo(ProductProfile::class);
+    }
+
+    public function sourceDocument(): BelongsTo
+    {
+        return $this->belongsTo(Document::class, 'source_document_id');
     }
 
     public function warehouse(): BelongsTo
@@ -290,7 +301,7 @@ class Item extends Model
         return $query->where('warehouse_id', $warehouseId);
     }
 
-    public function scopeByLocation($query, int $zoneId = null, int $rackId = null, int $shelfLevelId = null)
+    public function scopeByLocation($query, ?int $zoneId = null, ?int $rackId = null, ?int $shelfLevelId = null)
     {
         if ($zoneId) {
             $query->where('zone_id', $zoneId);
@@ -301,6 +312,7 @@ class Item extends Model
         if ($shelfLevelId) {
             $query->where('shelf_level_id', $shelfLevelId);
         }
+
         return $query;
     }
 
@@ -308,10 +320,10 @@ class Item extends Model
     {
         return $query->whereHas('productProfile', function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('sku', 'like', "%{$search}%")
-              ->orWhere('barcode', 'like', "%{$search}%")
-              ->orWhere('brand', 'like', "%{$search}%")
-              ->orWhere('model', 'like', "%{$search}%");
+                ->orWhere('sku', 'like', "%{$search}%")
+                ->orWhere('barcode', 'like', "%{$search}%")
+                ->orWhere('brand', 'like', "%{$search}%")
+                ->orWhere('model', 'like', "%{$search}%");
         })->orWhere('serial_number', 'like', "%{$search}%");
     }
 }

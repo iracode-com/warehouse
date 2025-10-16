@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Personnel extends Model
 {
@@ -15,22 +15,30 @@ class Personnel extends Model
 
     // Gender constants
     const GENDER_MALE = 'male';
+
     const GENDER_FEMALE = 'female';
 
     // Marital status constants
     const MARITAL_SINGLE = 'single';
+
     const MARITAL_MARRIED = 'married';
+
     const MARITAL_DIVORCED = 'divorced';
+
     const MARITAL_WIDOWED = 'widowed';
 
     // Nationality constants
     const IS_IRANIAN = 1;
+
     const IS_FOREIGN = 2;
 
     // Job field constants
     const JOB_WAREHOUSE_MANAGER = 'warehouse_manager';
+
     const JOB_WAREHOUSE_KEEPER = 'warehouse_keeper';
+
     const JOB_WAREHOUSE_OPERATOR = 'warehouse_operator';
+
     const JOB_WAREHOUSE_SUPERVISOR = 'warehouse_supervisor';
 
     /**
@@ -138,7 +146,7 @@ class Personnel extends Model
 
     public function getGenderLabelAttribute(): string
     {
-        return match($this->gender) {
+        return match ($this->gender) {
             self::GENDER_MALE => 'مرد',
             self::GENDER_FEMALE => 'زن',
             default => $this->gender,
@@ -147,7 +155,7 @@ class Personnel extends Model
 
     public function getMaritalStatusLabelAttribute(): string
     {
-        return match($this->marital_status) {
+        return match ($this->marital_status) {
             self::MARITAL_SINGLE => 'مجرد',
             self::MARITAL_MARRIED => 'متاهل',
             self::MARITAL_DIVORCED => 'مطلقه',
@@ -158,7 +166,7 @@ class Personnel extends Model
 
     public function getNationalityLabelAttribute(): string
     {
-        return match($this->is_iranian) {
+        return match ($this->is_iranian) {
             self::IS_IRANIAN => 'ایرانی',
             self::IS_FOREIGN => 'غیرایرانی',
             default => $this->is_iranian,
@@ -167,7 +175,7 @@ class Personnel extends Model
 
     public function getJobFieldLabelAttribute(): string
     {
-        return match($this->job_field) {
+        return match ($this->job_field) {
             self::JOB_WAREHOUSE_MANAGER => 'مدیر انبار',
             self::JOB_WAREHOUSE_KEEPER => 'نگهبان انبار',
             self::JOB_WAREHOUSE_OPERATOR => 'اپراتور انبار',
@@ -178,7 +186,7 @@ class Personnel extends Model
 
     public function getFullNameAttribute(): string
     {
-        return $this->name . ' ' . $this->family;
+        return $this->name.' '.$this->family;
     }
 
     public function sodoorCity(): BelongsTo
@@ -254,5 +262,23 @@ class Personnel extends Model
     public function warehouses(): HasMany
     {
         return $this->hasMany(Warehouse::class, 'keeper_id');
+    }
+
+    /**
+     * Get the warehouses this personnel works in.
+     */
+    public function assignedWarehouses(): BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouse_personnel')
+            ->withPivot('role', 'is_active')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get active assigned warehouses for this personnel.
+     */
+    public function activeAssignedWarehouses(): BelongsToMany
+    {
+        return $this->assignedWarehouses()->wherePivot('is_active', true);
     }
 }

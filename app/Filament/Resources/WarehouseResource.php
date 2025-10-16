@@ -5,6 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\WarehouseResource\Pages;
 use App\Models\Warehouse;
 use Dotswan\MapPicker\Fields\Map;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
@@ -12,18 +17,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
-use BackedEnum;
 
 class WarehouseResource extends Resource
 {
     protected static ?string $model = Warehouse::class;
-
 
     protected static ?string $navigationLabel = null;
 
@@ -131,6 +129,24 @@ class WarehouseResource extends Resource
                                     ->maxValue(1500)
                                     ->suffix('ه.ش'),
                             ]),
+                    ])
+                    ->collapsible(),
+
+                Section::make('پرسنل انبار')
+                    ->description('انبارداران و کارکنان انبار')
+                    ->icon('heroicon-o-user-group')
+                    ->iconColor('warning')
+                    ->columnSpanFull()
+                    ->schema([
+                        Forms\Components\Select::make('personnel')
+                            ->label('انبارداران')
+                            ->relationship('personnel', 'full_name')
+                            ->multiple()
+                            ->searchable(['name', 'family', 'personnel_code'])
+                            ->preload()
+                            ->prefixIcon('heroicon-o-users')
+                            ->helperText('انتخاب پرسنل انبار (چند انتخابی)')
+                            ->columnSpanFull(),
                     ])
                     ->collapsible(),
 
@@ -267,6 +283,13 @@ class WarehouseResource extends Resource
                                     ->searchable()
                                     ->preload(),
 
+                                Forms\Components\Select::make('base_id')
+                                    ->label(__('warehouse.base'))
+                                    ->relationship('base', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
+                                    ->searchable(['name->fa', 'name->en', 'coding'])
+                                    ->preload(),
+
                                 Forms\Components\Select::make('city_id')
                                     ->label(__('warehouse.city_id'))
                                     ->options(function () {
@@ -336,7 +359,7 @@ class WarehouseResource extends Resource
                                     ->liveLocation(true)
                                     ->label(__('warehouse.warehouse_location'))
                                     ->columnSpanFull()
-                                    ->defaultLocation(latitude: "35.7219", longitude: "51.3347")
+                                    ->defaultLocation(latitude: '35.7219', longitude: '51.3347')
                                     ->afterStateUpdated(function (Set $set, ?array $state, $livewire): void {
                                         if ($state) {
                                             $set('latitude', $state['lat']);
@@ -347,7 +370,7 @@ class WarehouseResource extends Resource
                                     ->reactive()
                                     ->extraStyles([
                                         'min-height: 50vh',
-                                        'border-radius: 50px'
+                                        'border-radius: 50px',
                                     ]),
                                 Forms\Components\TextInput::make('longitude')
                                     ->label('طول جغرافیایی')
@@ -689,39 +712,44 @@ class WarehouseResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('base.display_name')
+                    ->label(__('warehouse.base'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('city.name')
                     ->label(__('warehouse.table.city'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
-
                 Tables\Columns\TextColumn::make('usage_types')
                     ->label(__('warehouse.table.usage'))
                     ->getStateUsing(function ($record) {
                         return $record->usageTypes()->pluck('usage_type')->map(function ($type) {
-                            return __('warehouse.usage_types.' . $type);
+                            return __('warehouse.usage_types.'.$type);
                         })->join(', ');
                     })
                     ->badge()
                     ->separator(','),
 
-
                 Tables\Columns\TextColumn::make('area')
                     ->label(__('warehouse.table.area'))
                     ->numeric()
                     ->sortable()
-                    ->suffix(' ' . __('warehouse.units.square_meter'))
+                    ->suffix(' '.__('warehouse.units.square_meter'))
                     ->alignEnd(),
 
                 Tables\Columns\TextColumn::make('natural_hazards')
                     ->label(__('warehouse.natural_hazards'))
                     ->getStateUsing(function ($record) {
-                        if (!$record->natural_hazards) {
+                        if (! $record->natural_hazards) {
                             return 'بدون مخاطره';
                         }
+
                         return collect($record->natural_hazards)->map(function ($hazard) {
-                            return __('warehouse.natural_hazards_types.' . $hazard);
+                            return __('warehouse.natural_hazards_types.'.$hazard);
                         })->join(', ');
                     })
                     ->badge()
@@ -731,7 +759,7 @@ class WarehouseResource extends Resource
                 Tables\Columns\TextColumn::make('urban_location')
                     ->label(__('warehouse.urban_location'))
                     ->getStateUsing(function ($record) {
-                        return $record->urban_location ? __('warehouse.urban_location_types.' . $record->urban_location) : '';
+                        return $record->urban_location ? __('warehouse.urban_location_types.'.$record->urban_location) : '';
                     })
                     ->badge()
                     ->toggleable(),
@@ -739,11 +767,12 @@ class WarehouseResource extends Resource
                 Tables\Columns\TextColumn::make('utilities')
                     ->label(__('warehouse.utilities'))
                     ->getStateUsing(function ($record) {
-                        if (!$record->utilities) {
+                        if (! $record->utilities) {
                             return 'بدون انشعاب';
                         }
+
                         return collect($record->utilities)->map(function ($utility) {
-                            return __('warehouse.utilities_types.' . $utility);
+                            return __('warehouse.utilities_types.'.$utility);
                         })->join(', ');
                     })
                     ->badge()
@@ -752,9 +781,9 @@ class WarehouseResource extends Resource
 
                 Tables\Columns\TextColumn::make('ownership_type')
                     ->label(__('warehouse.table.ownership'))
-                    ->formatStateUsing(fn(string $state): string => __('warehouse.ownership_types.' . $state))
+                    ->formatStateUsing(fn (string $state): string => __('warehouse.ownership_types.'.$state))
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'owned' => 'success',
                         'rented' => 'warning',
                         'donated' => 'info',
@@ -776,6 +805,13 @@ class WarehouseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('base_id')
+                    ->label(__('warehouse.base'))
+                    ->relationship('base', 'name')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
+                    ->searchable()
+                    ->preload(),
+
                 Tables\Filters\SelectFilter::make('usage_type')
                     ->label(__('warehouse.filters.usage_type'))
                     ->multiple()
@@ -813,8 +849,8 @@ class WarehouseResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['area_from'], fn($query, $value) => $query->where('area', '>=', $value))
-                            ->when($data['area_to'], fn($query, $value) => $query->where('area', '<=', $value));
+                            ->when($data['area_from'], fn ($query, $value) => $query->where('area', '>=', $value))
+                            ->when($data['area_to'], fn ($query, $value) => $query->where('area', '<=', $value));
                     }),
             ])
             ->actions([
@@ -834,7 +870,7 @@ class WarehouseResource extends Resource
                     DeleteBulkAction::make()
                         ->label(__('warehouse.table.delete_selected'))
                         ->requiresConfirmation(),
-                ])
+                ]),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped()

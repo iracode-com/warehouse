@@ -2,8 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Widgets\DiamondNavigationWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -13,6 +16,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -20,12 +24,8 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
-use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Blade;
-use App\Filament\Widgets\DiamondNavigationWidget;
-use App\Filament\Pages\Auth\EditProfile;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -65,6 +65,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cube'),
                 \Filament\Navigation\NavigationGroup::make('منابع انسانی')
                     ->icon('heroicon-o-user-group'),
+                \Filament\Navigation\NavigationGroup::make('مدیریت اسناد')
+                    ->icon('heroicon-o-document-text'),
                 \Filament\Navigation\NavigationGroup::make()
                     ->label(__('position.navigation.group'))
                     ->icon('heroicon-c-information-circle'),
@@ -111,19 +113,19 @@ class AdminPanelProvider extends PanelProvider
         // Add the opening div after body start
         FilamentView::registerRenderHook(
             'panels::body.start',
-            fn(): string => '<div class="main-container" style="direction: rtl !important; overflow-y: auto; height: 100vh;">'
+            fn (): string => '<div class="main-container" style="direction: rtl !important; overflow-y: auto; height: 100vh;">'
         );
 
         // Close the div before body end
         FilamentView::registerRenderHook(
             'panels::body.end',
-            fn(): string => '</div>'
+            fn (): string => '</div>'
         );
 
         // Add your custom styles
         FilamentView::registerRenderHook(
             'panels::head.end',
-            fn(): string => Blade::render('<style>
+            fn (): string => Blade::render('<style>
             .fi-body {
                 direction: ltr;
                 overflow-y: auto;
@@ -147,7 +149,7 @@ class AdminPanelProvider extends PanelProvider
 
         FilamentView::registerRenderHook(
             'panels::body.end',
-            fn(): string => '
+            fn (): string => '
                     <script>
                         function scrollToActiveMenuItem() {
                             const sidebarNav = document.querySelector(".fi-sidebar-nav");

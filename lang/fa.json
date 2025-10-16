@@ -2719,6 +2719,7 @@
   "Central fax":"شماره فکس",
   "Width Latitude":"عرض جغرافیایی (به دقیقه)",
   "Length Longitude":"طول جغرافیایی (به دقیقه)",
+  "Items":"اقلام",
   "Wait Until Point Lat/Log Shows on TextInputs": "بعد انتخاب نقطه صبر کنید تا طول و عرض جغرافیایی در زیر نقشه نمایش داده شود",
   "Enter the role name in English and use hyphen (-) to separate words.": "نام نقش را به انگلیسی وارد کنید و برای جدا سازی کلمات از خط تیره (-) استفاده کنید.",
   "for example: writer, super-admin, developer, security-man": "به عنوان مثال: writer, super-admin, developer, security-man",
