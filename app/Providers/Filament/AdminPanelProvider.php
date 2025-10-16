@@ -54,23 +54,36 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make(__('warehouse.navigation_groups.warehouse_management'))
+                    ->collapsed()
                     ->icon('heroicon-o-building-office-2'),
                 \Filament\Navigation\NavigationGroup::make(__('warehouse.navigation_groups.location_management'))
+                    ->collapsed()
                     ->icon('heroicon-o-map-pin'),
                 \Filament\Navigation\NavigationGroup::make(__('warehouse.navigation_groups.user_management'))
+                    ->collapsed()
                     ->icon('heroicon-o-users'),
                 \Filament\Navigation\NavigationGroup::make('محل قرارگیری کالا')
+                    ->collapsed()
                     ->icon('heroicon-o-building-storefront'),
                 \Filament\Navigation\NavigationGroup::make('مدیریت کالا')
+                    ->collapsed()
                     ->icon('heroicon-o-cube'),
                 \Filament\Navigation\NavigationGroup::make('منابع انسانی')
+                    ->collapsed()
                     ->icon('heroicon-o-user-group'),
                 \Filament\Navigation\NavigationGroup::make('مدیریت اسناد')
+                    ->collapsed()
                     ->icon('heroicon-o-document-text'),
                 \Filament\Navigation\NavigationGroup::make()
+                    ->collapsed()
+                    ->label(__('Reporting Subsystem'))
+                    ->icon('heroicon-m-document-magnifying-glass'),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->collapsed()
                     ->label(__('position.navigation.group'))
                     ->icon('heroicon-c-information-circle'),
                 \Filament\Navigation\NavigationGroup::make()
+                    ->collapsed()
                     ->label(__('Organizational information'))
                     ->icon('heroicon-o-list-bullet'),
             ])
@@ -79,8 +92,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                // AccountWidget::class,
-                // FilamentInfoWidget::class,
+                    // AccountWidget::class,
+                    // FilamentInfoWidget::class,
                 DiamondNavigationWidget::class,
             ])
             ->middleware([
@@ -113,19 +126,19 @@ class AdminPanelProvider extends PanelProvider
         // Add the opening div after body start
         FilamentView::registerRenderHook(
             'panels::body.start',
-            fn (): string => '<div class="main-container" style="direction: rtl !important; overflow-y: auto; height: 100vh;">'
+            fn(): string => '<div class="main-container" style="direction: rtl !important; overflow-y: auto; height: 100vh;">'
         );
 
         // Close the div before body end
         FilamentView::registerRenderHook(
             'panels::body.end',
-            fn (): string => '</div>'
+            fn(): string => '</div>'
         );
 
         // Add your custom styles
         FilamentView::registerRenderHook(
             'panels::head.end',
-            fn (): string => Blade::render('<style>
+            fn(): string => Blade::render('<style>
             .fi-body {
                 direction: ltr;
                 overflow-y: auto;
@@ -149,7 +162,7 @@ class AdminPanelProvider extends PanelProvider
 
         FilamentView::registerRenderHook(
             'panels::body.end',
-            fn (): string => '
+            fn(): string => '
                     <script>
                         function scrollToActiveMenuItem() {
                             const sidebarNav = document.querySelector(".fi-sidebar-nav");

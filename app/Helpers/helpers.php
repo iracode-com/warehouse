@@ -875,3 +875,15 @@ if (! function_exists('setting')) {
         return $setting ?? null;
     }
 }
+
+
+if (! function_exists('formComponentsConfiguration')) {
+    function formComponentsConfiguration(): void
+    {
+        \Filament\Forms\Components\Field::configureUsing(fn($component) => $component->inlineLabel());
+        \Filament\Infolists\Components\Entry::configureUsing(fn($component) => $component->inlineLabel());
+
+        \Filament\Forms\Components\Checkbox::configureUsing(fn($component) => $component->inlineLabel(false));
+        \Filament\Forms\Components\Radio::configureUsing(fn($component) => $component->inline()->options([0 => __('No'), 1 => __('Yes')]));
+    }
+}
