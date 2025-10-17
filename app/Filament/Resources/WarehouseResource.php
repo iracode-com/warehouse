@@ -95,16 +95,101 @@ class WarehouseResource extends Resource
                                     ->label(__('warehouse.telephone'))
                                     ->tel()
                                     ->maxLength(255),
-                            ]),
 
-                        Forms\Components\Textarea::make('warehouse_info')
-                            ->label(__('warehouse.warehouse_info'))
-                            ->rows(3)
-                            ->columnSpanFull(),
+                                Forms\Components\Select::make('warehouse_standard')
+                                    ->label('وضعیت استاندارد')
+                                    ->options(__('common-options.standard_status'))
+                                    ->placeholder('انتخاب کنید')
+                                    ->required()
+                                    ->searchable(),
+
+                                Forms\Components\TextInput::make('shed_number')
+                                    ->label('شماره سوله انبار')
+                                    ->numeric(),
+
+                            ]),
                     ])
                     ->collapsible(),
 
-                // Location info section moved to geographic tab as requested
+                Section::make(__('warehouse.sections.geographic_info'))
+                    ->description(__('warehouse.geographic_info_desc'))
+                    ->icon('heroicon-o-globe-americas')
+                    ->columnSpanFull()
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Map::make('warehouse_location')
+                                    ->showMarker(true)
+                                    ->liveLocation(true)
+                                    ->label(__('warehouse.warehouse_location'))
+                                    ->columnSpanFull()
+                                    ->defaultLocation(latitude: '35.7219', longitude: '51.3347')
+                                    ->afterStateUpdated(function (Set $set, ?array $state, $livewire): void {
+                                        if ($state) {
+                                            $set('latitude', $state['lat']);
+                                            $set('longitude', $state['lng']);
+                                        }
+                                    })
+                                    ->live()
+                                    ->reactive()
+                                    ->extraStyles([
+                                        'min-height: 50vh',
+                                        'border-radius: 50px',
+                                    ]),
+                                Forms\Components\TextInput::make('longitude')
+                                    ->label('طول جغرافیایی')
+                                    ->numeric()
+                                    ->live()
+                                    ->reactive()
+                                    ->suffix('درجه'),
+
+                                Forms\Components\TextInput::make('latitude')
+                                    ->label('عرض جغرافیایی')
+                                    ->numeric()
+                                    ->live()
+                                    ->reactive()
+                                    ->suffix('درجه'),
+                            ]),
+
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('longitude_e')
+                                    ->label('طول جغرافیایی (E)')
+                                    ->numeric()
+                                    ->step(0.0000001)
+                                    ->suffix('درجه')
+                                    ->live()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (Set $set, ?float $state, $livewire): void {
+                                        if ($state) {
+                                            $set('longitude', $state);
+                                        }
+                                    }),
+
+                                Forms\Components\TextInput::make('latitude_n')
+                                    ->label('عرض جغرافیایی (N)')
+                                    ->numeric()
+                                    ->step(0.0000001)
+                                    ->suffix('درجه')
+                                    ->live()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (Set $set, ?float $state, $livewire): void {
+                                        if ($state) {
+                                            $set('latitude', $state);
+                                        }
+                                    }),
+                            ]),
+
+                        Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('altitude')
+                                    ->label('ارتفاع از سطح دریا')
+                                    ->numeric()
+                                    ->step(0.01)
+                                    ->suffix('متر'),
+                            ]),
+                    ])
+                    ->collapsible(),
 
                 Section::make(__('warehouse.sections.temporal_info'))
                     ->description(__('warehouse.sections.temporal_info_desc'))
@@ -274,27 +359,12 @@ class WarehouseResource extends Resource
                                     ->searchable()
                                     ->preload(),
 
-                                Forms\Components\Select::make('branch_id')
-                                    ->label(__('warehouse.branch_name'))
-                                    ->options(function () {
-                                        return \App\Models\Branch::all()->pluck('name', 'id')->toArray();
-                                    })
-                                    ->required()
-                                    ->searchable()
-                                    ->preload(),
-
-                                Forms\Components\Select::make('base_id')
-                                    ->label(__('warehouse.base'))
-                                    ->relationship('base', 'name')
-                                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
-                                    ->searchable(['name->fa', 'name->en', 'coding'])
-                                    ->preload(),
-
                                 Forms\Components\Select::make('city_id')
                                     ->label(__('warehouse.city_id'))
                                     ->options(function () {
                                         return \App\Models\Location\City::all()->pluck('name', 'id')->toArray();
                                     })
+                                    ->required()
                                     ->searchable()
                                     ->preload(),
 
@@ -303,6 +373,24 @@ class WarehouseResource extends Resource
                                     ->options(function () {
                                         return \App\Models\Location\Town::all()->pluck('name', 'id')->toArray();
                                     })
+                                    ->required()
+                                    ->searchable()
+                                    ->preload(),
+
+                                Forms\Components\Select::make('base_id')
+                                    ->label(__('warehouse.base'))
+                                    ->relationship('base', 'name')
+                                    ->getOptionLabelFromRecordUsing(fn($record) => $record->display_name)
+                                    ->searchable(['name->fa', 'name->en', 'coding'])
+                                    ->required()
+                                    ->preload(),
+
+                                Forms\Components\Select::make('branch_id')
+                                    ->label(__('warehouse.branch_name'))
+                                    ->options(function () {
+                                        return \App\Models\Branch::all()->pluck('name', 'id')->toArray();
+                                    })
+                                    ->required()
                                     ->searchable()
                                     ->preload(),
 
@@ -343,88 +431,6 @@ class WarehouseResource extends Resource
                                     ->minValue(0)
                                     ->step(0.01)
                                     ->suffix('کیلومتر'),
-                            ]),
-                    ])
-                    ->collapsible(),
-
-                Section::make(__('warehouse.sections.geographic_info'))
-                    ->description(__('warehouse.geographic_info_desc'))
-                    ->icon('heroicon-o-globe-americas')
-                    ->columnSpanFull()
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                Map::make('warehouse_location')
-                                    ->showMarker(true)
-                                    ->liveLocation(true)
-                                    ->label(__('warehouse.warehouse_location'))
-                                    ->columnSpanFull()
-                                    ->defaultLocation(latitude: '35.7219', longitude: '51.3347')
-                                    ->afterStateUpdated(function (Set $set, ?array $state, $livewire): void {
-                                        if ($state) {
-                                            $set('latitude', $state['lat']);
-                                            $set('longitude', $state['lng']);
-                                        }
-                                    })
-                                    ->live()
-                                    ->reactive()
-                                    ->extraStyles([
-                                        'min-height: 50vh',
-                                        'border-radius: 50px',
-                                    ]),
-                                Forms\Components\TextInput::make('longitude')
-                                    ->label('طول جغرافیایی')
-                                    ->numeric()
-                                    ->live()
-                                    ->reactive()
-                                    ->suffix('درجه'),
-
-                                Forms\Components\TextInput::make('latitude')
-                                    ->label('عرض جغرافیایی')
-                                    ->numeric()
-                                    ->live()
-                                    ->reactive()
-                                    ->suffix('درجه'),
-                            ]),
-
-                        Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('longitude_e')
-                                    ->label('طول جغرافیایی (E)')
-                                    ->numeric()
-                                    ->step(0.0000001)
-                                    ->suffix('درجه')
-                                    ->live()
-                                    ->reactive()
-                                    ->afterStateUpdated(function (Set $set, ?float $state, $livewire): void {
-                                        if ($state) {
-                                            $set('longitude', $state);
-                                        }
-                                    }),
-
-                                Forms\Components\TextInput::make('latitude_n')
-                                    ->label('عرض جغرافیایی (N)')
-                                    ->numeric()
-                                    ->step(0.0000001)
-                                    ->suffix('درجه')
-                                    ->live()
-                                    ->reactive()
-                                    ->afterStateUpdated(function (Set $set, ?float $state, $livewire): void {
-                                        if ($state) {
-                                            $set('latitude', $state);
-                                        }
-                                    }),
-                            ]),
-
-                        Grid::make(3)
-                            ->schema([
-                                Forms\Components\TextInput::make('altitude')
-                                    ->label('ارتفاع از سطح دریا')
-                                    ->numeric()
-                                    ->step(0.01)
-                                    ->suffix('متر'),
-
-                                // GPS X and GPS Y fields removed as requested
                             ]),
                     ])
                     ->collapsible(),
@@ -480,66 +486,77 @@ class WarehouseResource extends Resource
                     ->iconColor('warning')
                     ->columnSpanFull()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(4)
                             ->schema([
-                                Forms\Components\TextInput::make('diesel_forklift_healthy')
+                                Forms\Components\TextInput::make('diesel_forklift_healthy_count')
                                     ->label('لیفتراک دیزلی - تعداد سالم')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('diesel_forklift_defective')
+                                Forms\Components\TextInput::make('diesel_forklift_defective_count')
                                     ->label('لیفتراک دیزلی - تعداد معیوب')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('gasoline_forklift_healthy')
+                                Forms\Components\TextInput::make('gasoline_forklift_healthy_count')
                                     ->label('لیفتراک بنزینی - تعداد سالم')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('gasoline_forklift_defective')
+                                Forms\Components\TextInput::make('gasoline_forklift_defective_count')
                                     ->label('لیفتراک بنزینی - تعداد معیوب')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('gas_forklift_healthy')
+                                Forms\Components\TextInput::make('gas_forklift_healthy_count')
                                     ->label('لیفتراک گازسوز - تعداد سالم')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('gas_forklift_defective')
+                                Forms\Components\TextInput::make('gas_forklift_defective_count')
                                     ->label('لیفتراک گازسوز - تعداد معیوب')
                                     ->numeric()
                                     ->minValue(0)
+                                    ->columnSpan(2)
                                     ->suffix('عدد'),
-                            ]),
 
-                        Grid::make(3)
-                            ->schema([
-                                Forms\Components\Select::make('forklift_standard')
-                                    ->label('وضعیت استاندارد')
-                                    ->options(__('common-options.standard_status'))
-                                    ->placeholder('انتخاب کنید')
-                                    ->searchable(),
-
-                                Forms\Components\TextInput::make('ramp_length')
-                                    ->label('طول رمپ')
+                                Forms\Components\TextInput::make('electrical_forklift_healthy_count')
+                                    ->label('لیفتراک برقی - تعداد سالم')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->step(0.01)
-                                    ->suffix('متر'),
+                                    ->columnSpan(2)
+                                    ->suffix('عدد'),
 
-                                Forms\Components\TextInput::make('ramp_height')
-                                    ->label('ارتفاع رمپ')
+                                Forms\Components\TextInput::make('electrical_forklift_defective_count')
+                                    ->label('لیفتراک برقی - تعداد معیوب')
                                     ->numeric()
                                     ->minValue(0)
-                                    ->step(0.01)
-                                    ->suffix('متر'),
+                                    ->columnSpan(2)
+                                    ->suffix('عدد'),
+
+                                Forms\Components\TextInput::make('dual_fuel_forklift_healthy_count')
+                                    ->label('لیفتراک دوگانه سوز - تعداد سالم')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->columnSpan(2)
+                                    ->suffix('عدد'),
+
+                                Forms\Components\TextInput::make('dual_fuel_forklift_defective_count')
+                                    ->label('لیفتراک دوگانه سوز - تعداد معیوب')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->columnSpan(2)
+                                    ->suffix('عدد'),
                             ]),
                     ])
                     ->collapsible(),
@@ -552,7 +569,7 @@ class WarehouseResource extends Resource
                         Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('warehouse_insurance')
-                                    ->label('بیمه انبارها')
+                                    ->label('بیمه کالاهای داخل انبار')
                                     ->options(__('common-options.yes_no'))
                                     ->required()
                                     ->searchable(),
@@ -610,9 +627,137 @@ class WarehouseResource extends Resource
                                     ->numeric()
                                     ->minValue(0)
                                     ->suffix('عدد')
-                                    ->visible(fn ($get) => $get('ram_rack') === 'yes')
-                                    ->required(fn ($get) => $get('ram_rack') === 'yes'),
+                                    ->visible(fn($get) => $get('ram_rack') === 'yes')
+                                    ->required(fn($get) => $get('ram_rack') === 'yes'),
+
+                                Forms\Components\TextInput::make('fire_extinguishers_count')
+                                    ->label('تعداد کپسول آتش نشانی')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->suffix('عدد'),
                             ]),
+
+                        Grid::make(4)
+                            ->schema([
+                                Forms\Components\TextInput::make('ramp_length')
+                                    ->label('طول رمپ')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('ramp_height')
+                                    ->label('ارتفاع رمپ')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('building_length')
+                                    ->label('طول در حال ساخت')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('building_width')
+                                    ->label('عرض در حال ساخت')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('building_height')
+                                    ->label('ارتفاع در حال ساخت')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('building_metrage')
+                                    ->label('متراژ در حال ساخت')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->columnSpan(2)
+                                    ->suffix('متر'),
+
+                                Forms\Components\TextInput::make('small_inventory_count')
+                                    ->label('موجودی کوچک')
+                                    ->numeric()
+                                    ->columnSpan(2),
+
+                                Forms\Components\TextInput::make('large_inventory_count')
+                                    ->label('موجودی بزرگ')
+                                    ->numeric()
+                                    ->columnSpan(2),
+                            ]),
+
+                        // Additional warehouse infrastructure fields
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('flooring_type')
+                                    ->label('کف سازی مناسب انبار')
+                                    ->options(Warehouse::getFlooringTypeOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+
+                                Forms\Components\Select::make('window_condition')
+                                    ->label('دارای پنجره های مناسب')
+                                    ->options(Warehouse::getWindowConditionOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+                            ]),
+
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('loading_platform')
+                                    ->label('سکوی بارانداز مناسب و استاندارد')
+                                    ->options(Warehouse::getLoadingPlatformOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+
+                                Forms\Components\Select::make('external_fencing')
+                                    ->label('حصارکشی محوطه بیرونی')
+                                    ->options(Warehouse::getExternalFencingOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+                            ]),
+
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('ventilation_system')
+                                    ->label('تهویه هوای مناسب')
+                                    ->options(Warehouse::getVentilationSystemOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+
+                                Forms\Components\Select::make('wall_distance')
+                                    ->label('رعایت فاصله دیوارهای انبار')
+                                    ->options(Warehouse::getWallDistanceOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable(),
+                            ]),
+
+                        Grid::make(1)
+                            ->schema([
+                                Forms\Components\Select::make('security_guard')
+                                    ->label('وضعیت نگهبانی/سرایداری')
+                                    ->options(Warehouse::getSecurityGuardOptions())
+                                    ->placeholder('انتخاب کنید')
+                                    ->searchable()
+                                    ->columnSpan(1),
+                            ]),
+
+                        Forms\Components\Textarea::make('warehouse_info')
+                            ->label(__('warehouse.warehouse_info'))
+                            ->rows(3)
+                            ->columnSpanFull(),
 
                     ])
                     ->collapsible(),
@@ -622,6 +767,7 @@ class WarehouseResource extends Resource
                     ->icon('heroicon-o-shield-check')
                     ->iconColor('success')
                     ->columnSpanFull()
+                    ->visible(false)
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -728,7 +874,7 @@ class WarehouseResource extends Resource
                     ->label(__('warehouse.table.usage'))
                     ->getStateUsing(function ($record) {
                         return $record->usageTypes()->pluck('usage_type')->map(function ($type) {
-                            return __('warehouse.usage_types.'.$type);
+                            return __('warehouse.usage_types.' . $type);
                         })->join(', ');
                     })
                     ->badge()
@@ -738,18 +884,18 @@ class WarehouseResource extends Resource
                     ->label(__('warehouse.table.area'))
                     ->numeric()
                     ->sortable()
-                    ->suffix(' '.__('warehouse.units.square_meter'))
+                    ->suffix(' ' . __('warehouse.units.square_meter'))
                     ->alignEnd(),
 
                 Tables\Columns\TextColumn::make('natural_hazards')
                     ->label(__('warehouse.natural_hazards'))
                     ->getStateUsing(function ($record) {
-                        if (! $record->natural_hazards) {
+                        if (!$record->natural_hazards) {
                             return 'بدون مخاطره';
                         }
 
                         return collect($record->natural_hazards)->map(function ($hazard) {
-                            return __('warehouse.natural_hazards_types.'.$hazard);
+                            return __('warehouse.natural_hazards_types.' . $hazard);
                         })->join(', ');
                     })
                     ->badge()
@@ -759,7 +905,7 @@ class WarehouseResource extends Resource
                 Tables\Columns\TextColumn::make('urban_location')
                     ->label(__('warehouse.urban_location'))
                     ->getStateUsing(function ($record) {
-                        return $record->urban_location ? __('warehouse.urban_location_types.'.$record->urban_location) : '';
+                        return $record->urban_location ? __('warehouse.urban_location_types.' . $record->urban_location) : '';
                     })
                     ->badge()
                     ->toggleable(),
@@ -767,12 +913,12 @@ class WarehouseResource extends Resource
                 Tables\Columns\TextColumn::make('utilities')
                     ->label(__('warehouse.utilities'))
                     ->getStateUsing(function ($record) {
-                        if (! $record->utilities) {
+                        if (!$record->utilities) {
                             return 'بدون انشعاب';
                         }
 
                         return collect($record->utilities)->map(function ($utility) {
-                            return __('warehouse.utilities_types.'.$utility);
+                            return __('warehouse.utilities_types.' . $utility);
                         })->join(', ');
                     })
                     ->badge()
@@ -781,9 +927,9 @@ class WarehouseResource extends Resource
 
                 Tables\Columns\TextColumn::make('ownership_type')
                     ->label(__('warehouse.table.ownership'))
-                    ->formatStateUsing(fn (string $state): string => __('warehouse.ownership_types.'.$state))
+                    ->formatStateUsing(fn(string $state): string => __('warehouse.ownership_types.' . $state))
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'owned' => 'success',
                         'rented' => 'warning',
                         'donated' => 'info',
@@ -808,7 +954,7 @@ class WarehouseResource extends Resource
                 Tables\Filters\SelectFilter::make('base_id')
                     ->label(__('warehouse.base'))
                     ->relationship('base', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->display_name)
                     ->searchable()
                     ->preload(),
 
@@ -849,8 +995,8 @@ class WarehouseResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['area_from'], fn ($query, $value) => $query->where('area', '>=', $value))
-                            ->when($data['area_to'], fn ($query, $value) => $query->where('area', '<=', $value));
+                            ->when($data['area_from'], fn($query, $value) => $query->where('area', '>=', $value))
+                            ->when($data['area_to'], fn($query, $value) => $query->where('area', '<=', $value));
                     }),
             ])
             ->actions([

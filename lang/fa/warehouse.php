@@ -104,8 +104,8 @@ return [
     'usage_type' => 'نوع کاربری',
     'ownership_type' => 'نوع مالکیت',
     'province_id' => 'استان',
-    'city_id' => 'شهر',
-    'town_id' => 'شهرستان',
+    'city_id' => 'شهرستان',
+    'town_id' => 'شهر',
     'village_id' => 'روستا',
     'manager_name' => 'نام مسئول انبار',
     'manager_phone' => 'شماره تماس مسئول انبار',
@@ -165,7 +165,8 @@ return [
     // Usage types
     'usage_types' => [
         'emergency' => 'امدادی',
-        'scrap_used' => 'اسقاط و مستعمل (غیرامدادی)',
+        'non_emergency' => 'غیرامدادی',
+        'scrap_used' => 'اسقاط و مستعمل',
         'auto_parts' => 'لوازم و قطعات یدکی خودرو',
         'ready_operations' => 'آماده عملیات',
         'air_rescue_parts' => 'لوازم و قطعات امداد هوایی',
@@ -244,9 +245,12 @@ return [
 
     // Ownership types
     'ownership_types' => [
-        'owned' => 'مالکیتی',
+        'owned' => 'مالکیت',
         'rented' => 'استیجاری',
         'donated' => 'اهدا',
+        'has claimant' => 'دارای معارض و مدعی',
+        'endowment' => 'وقفی',
+        'has_timing' => 'در اختیار طبق زمانبندی',
     ],
 
     // Structure types
@@ -266,6 +270,7 @@ return [
         'healthy' => 'سالم',
         'defective' => 'معیوب',
         'installing' => 'در حال نصب',
+        'auto' => 'اتوماتیک',
     ],
 
     'standard_status' => [

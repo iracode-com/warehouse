@@ -65,7 +65,7 @@ class PersonnelResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Organizational information');
+        return __('warehouse.navigation_groups.user_management');
     }
 
     public static function getNavigationLabel(): string

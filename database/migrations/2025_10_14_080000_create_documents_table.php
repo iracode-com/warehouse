@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('document_type')->comment('نوع سند: receipt, issue, transfer, return, adjustment');
             $table->date('document_date')->comment('تاریخ سند');
 
+            $table->foreignId('supplier_id')->comment('تامین‌کننده')->nullable()->constrained('suppliers')->nullOnDelete();
+
             // انبار مبدا و مقصد
             $table->foreignId('source_warehouse_id')->nullable()->constrained('warehouses')->nullOnDelete()->comment('انبار مبدا');
             $table->foreignId('destination_warehouse_id')->nullable()->constrained('warehouses')->nullOnDelete()->comment('انبار مقصد');
@@ -64,6 +66,7 @@ return new class extends Migration
             $table->index('document_date');
             $table->index('status');
             $table->index('creator_id');
+            $table->index('supplier_id');
         });
     }
 

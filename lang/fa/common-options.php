@@ -19,6 +19,7 @@ return [
         'healthy' => 'سالم',
         'defective' => 'معیوب',
         'installing' => 'در حال نصب',
+        'auto' => 'اتوماتیک',
     ],
 
     // Access type options

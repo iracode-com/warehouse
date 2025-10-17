@@ -27,6 +27,7 @@ class Supplier extends Model
         'website',
         'notes',
         'status',
+        'metadata',
     ];
 
     protected $casts = [

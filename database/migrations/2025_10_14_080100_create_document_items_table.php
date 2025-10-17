@@ -33,6 +33,8 @@ return new class extends Migration
             $table->decimal('tax_amount', 15, 2)->default(0)->comment('مبلغ مالیات');
             $table->decimal('final_amount', 15, 2)->default(0)->comment('مبلغ نهایی');
 
+            $table->json('item_images')->nullable()->comment('تصاویر کالا');
+
             // اطلاعات بچ و انقضا (برای ردیابی)
             $table->string('batch_number')->nullable()->comment('شماره بچ/دسته');
             $table->date('expiry_date')->nullable()->comment('تاریخ انقضا');

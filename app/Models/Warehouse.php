@@ -56,6 +56,95 @@ class Warehouse extends Model
         ];
     }
 
+    /**
+     * Get flooring type options
+     */
+    public static function getFlooringTypeOptions(): array
+    {
+        return [
+            'epoxy' => 'اپوکسی',
+            'good_concrete' => 'بتون مرغوب',
+            'medium_concrete' => 'بتون متوسط',
+            'poor_concrete' => 'بتون نا مرغوب',
+        ];
+    }
+
+    /**
+     * Get window condition options
+     */
+    public static function getWindowConditionOptions(): array
+    {
+        return [
+            'proper_protection' => 'دارای محافظ مناسب',
+            'suitable_height' => 'ارتفاع مناسب',
+            'healthy_glass' => 'شیشه سالم',
+            'none' => 'ندارد',
+        ];
+    }
+
+    /**
+     * Get loading platform options
+     */
+    public static function getLoadingPlatformOptions(): array
+    {
+        return [
+            'under_1m' => 'عرض زیر 1 متر',
+            '1_to_2m' => 'عرض بین 1 الی 2 متر',
+            '2_to_3m' => 'عرض بین 2 الی 3 متر',
+            '3_to_4m' => 'عرض بین 3 الی 4 متر',
+            'none' => 'ندارد',
+        ];
+    }
+
+    /**
+     * Get external fencing options
+     */
+    public static function getExternalFencingOptions(): array
+    {
+        return [
+            'yes' => 'دارد',
+            'no' => 'ندارد',
+        ];
+    }
+
+    /**
+     * Get ventilation system options
+     */
+    public static function getVentilationSystemOptions(): array
+    {
+        return [
+            'both_sides' => 'در 2 طرف بزرگ',
+            'one_side' => 'در یکطرف',
+            'broken' => 'خراب',
+            'none' => 'ندارد',
+        ];
+    }
+
+    /**
+     * Get wall distance options
+     */
+    public static function getWallDistanceOptions(): array
+    {
+        return [
+            'attached' => 'متصل (بدون فاصله)',
+            '1_to_2m' => '1 الی 2 متر',
+            '2_to_3m' => '2 الی 3 متر',
+            '3_to_4m' => '3 الی 4 متر',
+            'over_4m' => 'بالای 4 متر',
+        ];
+    }
+
+    /**
+     * Get security guard options
+     */
+    public static function getSecurityGuardOptions(): array
+    {
+        return [
+            'yes' => 'دارد',
+            'no' => 'ندارد',
+        ];
+    }
+
     protected $fillable = [
         'shed_id',
         'branch_id',
@@ -72,6 +161,7 @@ class Warehouse extends Model
         'province',
         'branch',
         'base',
+        'shed_number',
         'warehouse_info',
         'establishment_year',
         'construction_year',
@@ -83,16 +173,27 @@ class Warehouse extends Model
         'warehouse_count',
         'small_inventory_count',
         'large_inventory_count',
-        'diesel_forklift_status',
-        'gasoline_forklift_status',
-        'gas_forklift_status',
-        'forklift_standard',
+        'diesel_forklift_healthy_count',
+        'diesel_forklift_defective_count',
+        'gasoline_forklift_healthy_count',
+        'gasoline_forklift_defective_count',
+        'gas_forklift_healthy_count',
+        'gas_forklift_defective_count',
+        'electrical_forklift_healthy_count',
+        'electrical_forklift_defective_count',
+        'dual_fuel_forklift_healthy_count',
+        'dual_fuel_forklift_defective_count',
         'ramp_length',
         'ramp_height',
+        'building_length',
+        'building_width',
+        'building_height',
+        'building_metrage',
         'warehouse_insurance',
         'building_insurance',
         'fire_suppression_system',
         'fire_alarm_system',
+        'fire_extinguishers_count',
         'ram_rack',
         'ram_rack_count',
         'cctv_system',
@@ -125,6 +226,14 @@ class Warehouse extends Model
         'distance_to_branch_1',
         'nearest_branch_2_id',
         'distance_to_branch_2',
+        'warehouse_standard',
+        'flooring_type',
+        'window_condition',
+        'loading_platform',
+        'external_fencing',
+        'ventilation_system',
+        'wall_distance',
+        'security_guard',
     ];
 
     protected function casts(): array
@@ -156,7 +265,8 @@ class Warehouse extends Model
     {
         return match ($this->usage_type) {
             'emergency' => 'امدادی',
-            'scrap_used' => 'اسقاط و مستعمل (غیرامدادی)',
+            'scrap_used' => 'اسقاط و مستعمل',
+            'non_emergency' => 'غیرامدادی',
             'auto_parts' => 'لوازم و قطعات یدکی خودرو',
             'ready_operations' => 'آماده عملیات',
             'air_rescue_parts' => 'لوازم و قطعات امداد هوایی',
@@ -169,9 +279,12 @@ class Warehouse extends Model
     public function getOwnershipTypeLabelAttribute(): string
     {
         return match ($this->ownership_type) {
-            'owned' => 'مالکیتی',
+            'owned' => 'مالکیت',
             'rented' => 'استیجاری',
             'donated' => 'اهدا',
+            'has claimant' => 'دارای معارض و مدعی',
+            'endowment' => 'وقفی',
+            'has_timing' => 'در اختیار طبق زمانبندی',
             default => $this->ownership_type,
         };
     }

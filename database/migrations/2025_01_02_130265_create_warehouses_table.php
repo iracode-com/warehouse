@@ -47,6 +47,10 @@ return new class extends Migration
                 'rented', // استیجاری
                 'donated' // اهدا
             ]);
+
+            $table->enum('warehouse_standard', ['standard', 'deficit', 'surplus'])->nullable(); // استاندارد/کسری/مازاد
+
+            $table->string('shed_number', 100);
             
             // Area information
             $table->decimal('area', 10, 2)->nullable(); // متراژ
@@ -66,22 +70,38 @@ return new class extends Migration
             $table->integer('large_inventory_count')->nullable(); // تعداد موجودی بزرگ
             
             // Forklift information
-            $table->enum('diesel_forklift_status', ['healthy', 'defective'])->nullable(); // دیزلی - سالم/معیوب
-            $table->enum('gasoline_forklift_status', ['healthy', 'defective'])->nullable(); // بنزینی - سالم/معیوب
-            $table->enum('gas_forklift_status', ['healthy', 'defective'])->nullable(); // گازسوز - سالم/معیوب
-            $table->enum('forklift_standard', ['standard', 'deficit', 'surplus'])->nullable(); // استاندارد/کسری/مازاد
+            $table->integer('diesel_forklift_healthy_count')->nullable(); // دیزلی - سالم/معیوب
+            $table->integer('diesel_forklift_defective_count')->nullable(); // دیزلی - سالم/معیوب
+            $table->integer('gasoline_forklift_healthy_count')->nullable(); // بنزینی - سالم/معیوب
+            $table->integer('gasoline_forklift_defective_count')->nullable(); // بنزینی - سالم/معیوب
+            $table->integer('gas_forklift_healthy_count')->nullable(); // گازسوز - سالم/معیوب
+            $table->integer('gas_forklift_defective_count')->nullable(); // گازسوز - سالم/معیوب
+            $table->integer('electrical_forklift_healthy_count')->nullable(); // برقی - سالم/معیوب
+            $table->integer('electrical_forklift_defective_count')->nullable(); // برقی - سالم/معیوب
+            $table->integer('dual_fuel_forklift_healthy_count')->nullable(); // دوگانه سوز - سالم/معیوب
+            $table->integer('dual_fuel_forklift_defective_count')->nullable(); // دوگانه سوز - سالم/معیوب
             $table->decimal('ramp_length', 8, 2)->nullable(); // طول رمپ لیفتراک
             $table->decimal('ramp_height', 8, 2)->nullable(); // ارتفاع رمپ لیفتراک
             
             // Other information
             $table->enum('warehouse_insurance', ['yes', 'no']); // بیمه انبارها
             $table->enum('building_insurance', ['yes', 'no']); // بیمه ابنیه
-            $table->enum('fire_suppression_system', ['healthy', 'defective', 'installing'])->nullable(); // سیستم اطفا حریق اتوماتیک
-            $table->enum('fire_alarm_system', ['healthy', 'defective', 'installing'])->nullable(); // سیستم اعلان حریق اتوماتیک
+            $table->enum('fire_suppression_system', ['healthy', 'defective', 'installing', 'auto'])->nullable(); // سیستم اطفا حریق اتوماتیک
+            $table->enum('fire_alarm_system', ['healthy', 'defective', 'installing', 'auto'])->nullable(); // سیستم اعلان حریق اتوماتیک
             $table->enum('ram_rack', ['yes', 'no']); // رام و راک
             $table->integer('ram_rack_count')->nullable(); // تعداد رام راک
-            $table->enum('cctv_system', ['healthy', 'defective', 'installing'])->nullable(); // دوربین مدار بسته
+            $table->integer('fire_extinguishers_count')->nullable(); // تعداد کپسول آتش نشانی
+            $table->enum('cctv_system', ['healthy', 'defective', 'installing', 'auto'])->nullable(); // دوربین مدار بسته
             $table->enum('lighting_system', ['healthy', 'defective'])->nullable(); // سیستم روشنایی استاندارد
+            
+            // Additional warehouse infrastructure fields
+            $table->enum('flooring_type', ['epoxy', 'good_concrete', 'medium_concrete', 'poor_concrete'])->nullable()->comment('نوع کف سازی انبار');
+            $table->enum('window_condition', ['proper_protection', 'suitable_height', 'healthy_glass', 'none'])->nullable()->comment('وضعیت پنجره ها');
+            $table->enum('loading_platform', ['under_1m', '1_to_2m', '2_to_3m', '3_to_4m', 'none'])->nullable()->comment('سکوی بارانداز مناسب');
+            $table->enum('external_fencing', ['yes', 'no'])->nullable()->comment('حصارکشی محوطه بیرونی');
+            $table->enum('ventilation_system', ['both_sides', 'one_side', 'broken', 'none'])->nullable()->comment('تهویه هوای مناسب');
+            $table->enum('wall_distance', ['attached', '1_to_2m', '2_to_3m', '3_to_4m', 'over_4m'])->nullable()->comment('فاصله دیوارهای انبار');
+            $table->enum('security_guard', ['yes', 'no'])->nullable()->comment('وضعیت نگهبانی/سرایداری');
             
             // Geographic information
             $table->decimal('longitude', 10, 7)->nullable(); // طول جغرافیایی
@@ -90,6 +110,12 @@ return new class extends Migration
             $table->decimal('latitude_n', 10, 7)->nullable(); // عرض جغرافیایی (N)
             $table->decimal('altitude', 8, 2)->nullable(); // ارتفاع
             $table->text('address'); // آدرس
+
+            // طول – عرض- ارتفاع-متراز-در دست ساخت
+            $table->decimal('building_length', 18, 2)->nullable();
+            $table->decimal('building_width', 18, 2)->nullable();
+            $table->decimal('building_height', 18, 2)->nullable();
+            $table->decimal('building_metrage', 18, 2)->nullable();
             
             // Additional information
             $table->integer('branch_establishment_year')->nullable(); // سال تاسیس شعبه

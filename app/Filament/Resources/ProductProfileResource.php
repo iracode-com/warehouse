@@ -144,11 +144,6 @@ class ProductProfileResource extends Resource
                                     ->label(__('product-profile.fields.model'))
                                     ->maxLength(255),
                             ]),
-
-                        Forms\Components\Textarea::make('description')
-                            ->label(__('product-profile.fields.description'))
-                            ->rows(3)
-                            ->columnSpanFull(),
                     ])
                     ->collapsible(),
 
@@ -310,7 +305,6 @@ class ProductProfileResource extends Resource
 
                                 Forms\Components\TextInput::make('product_address')
                                     ->label(__('product-profile.fields.product_address'))
-                                    ->required()
                                     ->maxLength(255),
                             ]),
                     ])
@@ -372,19 +366,19 @@ class ProductProfileResource extends Resource
                         Forms\Components\Textarea::make('technical_specs')
                             ->label(__('product-profile.fields.technical_specs'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_technical_specs'))
+                            ->visible(fn($get): bool => $get('has_technical_specs'))
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('storage_conditions')
                             ->label(__('product-profile.fields.storage_conditions'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_storage_conditions'))
+                            ->visible(fn($get): bool => $get('has_storage_conditions'))
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('inspection_details')
                             ->label(__('product-profile.fields.inspection_details'))
                             ->rows(4)
-                            ->visible(fn ($get): bool => $get('has_inspection'))
+                            ->visible(fn($get): bool => $get('has_inspection'))
                             ->columnSpanFull(),
                     ])
                     ->collapsible(),
@@ -408,7 +402,7 @@ class ProductProfileResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->visible(fn ($get): bool => $get('has_similar_products'))
+                            ->visible(fn($get): bool => $get('has_similar_products'))
                             ->columnSpanFull(),
 
                         // Grid::make(2)
@@ -522,6 +516,10 @@ class ProductProfileResource extends Resource
                     ->schema([
                         Forms\Components\KeyValue::make('specifications')
                             ->label(__('product-profile.fields.specifications')),
+                        Forms\Components\Textarea::make('description')
+                            ->label(__('product-profile.fields.description'))
+                            ->rows(3)
+                            ->columnSpanFull(),
                     ])
                     ->collapsible(),
             ]);
@@ -541,7 +539,7 @@ class ProductProfileResource extends Resource
                     ->label(__('product-profile.table.name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn (ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
+                    ->description(fn(ProductProfile $record): string => $record->brand ? "برند: {$record->brand}" : ''),
 
                 Tables\Columns\TextColumn::make('category.name')
                     ->label(__('product-profile.table.category'))
@@ -554,7 +552,7 @@ class ProductProfileResource extends Resource
                     ->label(__('product-profile.table.category_type'))
                     ->getStateUsing(function ($record) {
                         return $record->category && $record->category->category_type ?
-                            __('product-profile.options.category_types.'.$record->category->category_type) : '';
+                            __('product-profile.options.category_types.' . $record->category->category_type) : '';
                     })
                     ->badge()
                     ->color('warning')
@@ -571,7 +569,7 @@ class ProductProfileResource extends Resource
                 Tables\Columns\TextColumn::make('product_type')
                     ->label(__('product-profile.table.product_type'))
                     ->getStateUsing(function ($record) {
-                        return $record->product_type ? __('product-profile.options.product_types.'.$record->product_type) : '';
+                        return $record->product_type ? __('product-profile.options.product_types.' . $record->product_type) : '';
                     })
                     ->badge()
                     ->toggleable(),
@@ -586,14 +584,14 @@ class ProductProfileResource extends Resource
 
                 Tables\Columns\ImageColumn::make('barcode_image')
                     ->label(__('product-profile.fields.barcode'))
-                    ->getStateUsing(fn ($record) => $record->barcode_image)
+                    ->getStateUsing(fn($record) => $record->barcode_image)
                     ->size(100)
                     ->height(40)
                     ->toggleable(),
 
                 Tables\Columns\ImageColumn::make('qr_code_image')
                     ->label(__('product-profile.fields.qr_code'))
-                    ->getStateUsing(fn ($record) => $record->qr_code_image)
+                    ->getStateUsing(fn($record) => $record->qr_code_image)
                     ->size(60)
                     ->height(60)
                     ->toggleable(),
@@ -614,7 +612,7 @@ class ProductProfileResource extends Resource
                         return $record->status_label;
                     })
                     ->badge()
-                    ->color(fn (ProductProfile $record): string => $record->status_color),
+                    ->color(fn(ProductProfile $record): string => $record->status_color),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('product-profile.table.created_at'))

@@ -52,7 +52,7 @@ class RegionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('warehouse.navigation_groups.location_management');
+        return __('base.navigation_group');
     }
 
     public static function form(Schema $schema): Schema

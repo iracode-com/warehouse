@@ -24,7 +24,7 @@ class SupplierResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Organizational information');
+        return __('warehouse.navigation_groups.user_management');
     }
 
     public static function getNavigationIcon(): ?string
@@ -90,7 +90,7 @@ class SupplierResource extends Resource
                         Forms\Components\TextInput::make('company_name')
                             ->label('نام شرکت')
                             ->maxLength(255)
-                            ->visible(fn($get) => $get('entity_type') === Supplier::ENTITY_INDIVIDUAL)
+                            ->visible(fn($get) => $get('entity_type') === Supplier::ENTITY_LEGAL)
                             ->columnSpan(2),
 
                         Forms\Components\Select::make('status')
