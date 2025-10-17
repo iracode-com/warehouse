@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('region_id');
             $table->unsignedTinyInteger('type_operational_center')->comment('نوع مرکز عملیاتی');
             $table->tinyInteger('account_type')->nullable()->comment('نوع حساب');
-            $table->json('name')->comment('نام مرکز عملیاتی');
+            $table->string('name')->comment('نام مرکز عملیاتی');
             $table->string('coding_old', 11)->nullable()->comment('کدینگ قدیم');
             $table->string('coding', 11)->default('')->comment('کدینگ');
             $table->tinyInteger('three_digit_code_new')->nullable()->comment('کد مرکز عملیاتی جدید');

@@ -83,14 +83,9 @@ class BaseResource extends Resource
                             ->native(false)
                             ->columnSpan(1),
 
-                        Forms\Components\TextInput::make('name.fa')
-                            ->label(__('base.name_fa'))
+                        Forms\Components\TextInput::make('name')
+                            ->label(__('Name'))
                             ->required()
-                            ->maxLength(255)
-                            ->columnSpan(1),
-
-                        Forms\Components\TextInput::make('name.en')
-                            ->label(__('base.name_en'))
                             ->maxLength(255)
                             ->columnSpan(1),
 
