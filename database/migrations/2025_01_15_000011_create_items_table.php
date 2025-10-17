@@ -16,9 +16,12 @@ return new class extends Migration
             
             // Product Profile relationship
             $table->unsignedBigInteger('product_profile_id')->comment('شناسه شناسنامه کالا');
+            $table->foreignId('source_document_id')->nullable()->constrained('documents')->nullOnDelete()->comment('سند مبدا');
             
             // Item specific fields
             $table->string('serial_number')->nullable()->comment('شماره سریال');
+            $table->string('barcode')->nullable()->comment('بارکد کالا');
+            $table->string('qr_code')->nullable()->comment('QR Code کالا');
             
             // Inventory properties
             $table->integer('current_stock')->default(0)->comment('موجودی فعلی');
@@ -30,8 +33,10 @@ return new class extends Migration
             // Status and dates
             $table->enum('status', ['active', 'inactive', 'discontinued', 'recalled'])->default('active')->comment('وضعیت کالا');
             $table->date('manufacture_date')->nullable()->comment('تاریخ تولید');
+            $table->date('production_date')->nullable()->comment('تاریخ تولید');
             $table->date('expiry_date')->nullable()->comment('تاریخ انقضا');
             $table->date('purchase_date')->nullable()->comment('تاریخ خرید');
+            $table->string('batch_number', 100)->nullable()->comment('شماره بچ/دسته');
             
             // Location
             $table->unsignedBigInteger('warehouse_id')->nullable()->comment('شناسه انبار');

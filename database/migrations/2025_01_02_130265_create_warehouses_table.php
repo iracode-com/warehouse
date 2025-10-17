@@ -14,9 +14,17 @@ return new class extends Migration
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
             
+            // Foreign keys
+            $table->unsignedBigInteger('branch_id')->nullable();
+            $table->unsignedBigInteger('base_id')->nullable();
+            $table->unsignedBigInteger('shed_id')->nullable();
+            $table->unsignedBigInteger('province_id')->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('town_id')->nullable();
+            $table->unsignedBigInteger('village_id')->nullable();
+            
             // Basic warehouse information
             $table->string('title'); // عنوان انبار
-
             $table->string('telephone')->nullable(); // تلفن
             
             // Warehouse usage type
@@ -126,6 +134,16 @@ return new class extends Migration
             $table->decimal('gps_x', 10, 7)->nullable(); // GPS x
             $table->decimal('gps_y', 10, 7)->nullable(); // GPS y
             
+            // Additional location and access fields
+            $table->json('natural_hazards')->nullable(); // مخاطرات طبیعی
+            $table->string('urban_location')->nullable(); // موقعیت شهری
+            $table->string('main_road_access')->nullable(); // دسترسی به جاده اصلی
+            $table->string('heavy_vehicle_access')->nullable(); // دسترسی وسایل نقلیه سنگین
+            $table->json('terminal_proximity')->nullable(); // مجاورت با ترمینال
+            $table->string('parking_facilities')->nullable(); // امکانات پارکینگ
+            $table->json('utilities')->nullable(); // انشعابات
+            $table->json('neighboring_organizations')->nullable(); // سازمان‌های همسایه
+            
             // Warehouse keeper/user information
             $table->string('keeper_name')->nullable(); // نام انباردار/کاربر
             $table->string('keeper_mobile')->nullable(); // شماره موبایل
@@ -140,6 +158,15 @@ return new class extends Migration
             $table->boolean('status')->default(true); // فعال/غیر فعال
             
             $table->timestamps();
+            
+            // Foreign key constraints
+            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
+            $table->foreign('base_id')->references('id')->on('bases')->onDelete('set null');
+            $table->foreign('shed_id')->references('id')->on('warehouse_sheds')->onDelete('set null');
+            $table->foreign('province_id')->references('id')->on('regions')->onDelete('set null');
+            $table->foreign('city_id')->references('id')->on('regions')->onDelete('set null');
+            $table->foreign('town_id')->references('id')->on('regions')->onDelete('set null');
+            $table->foreign('village_id')->references('id')->on('regions')->onDelete('set null');
         });
     }
 

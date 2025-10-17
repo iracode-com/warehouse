@@ -20,10 +20,8 @@ return new class extends Migration
             $table->enum('set_type', ['set', 'basket'])->default('set')->comment('نوع: ست یا سبد');
             $table->boolean('is_active')->default(true)->comment('وضعیت فعال');
             $table->integer('total_quantity')->default(1)->comment('تعداد کل در هر ست');
-            $table->string('unit', 50)->nullable()->comment('واحد');
+            $table->foreignId('unit_id')->nullable()->constrained('units')->nullOnDelete()->comment('واحد');
             $table->timestamps();
-
-            $table->foreign('product_profile_id')->references('id')->on('product_profiles')->onDelete('cascade');
         });
     }
 

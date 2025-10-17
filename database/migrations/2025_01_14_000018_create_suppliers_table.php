@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique()->comment('کد تامین‌کننده');
             $table->string('name')->comment('نام تامین‌کننده');
+            $table->string('entity_type')->default('individual')->comment('نوع شخصیت: individual, legal');
             $table->string('company_name')->nullable()->comment('نام شرکت');
             $table->string('contact_person')->nullable()->comment('شخص تماس');
             $table->string('email')->nullable()->comment('ایمیل');
@@ -30,6 +31,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index('status');
+            $table->index('entity_type');
             $table->index('province_id');
             $table->index('city_id');
             $table->index('country_id');

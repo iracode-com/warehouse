@@ -14,15 +14,14 @@ return new class extends Migration
         Schema::create('product_set_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_set_id')->comment('شناسه ست/سبد');
-            $table->unsignedBigInteger('product_profile_id')->comment('شناسه کالا');
+            $table->foreignId('item_id')->constrained('items')->onDelete('cascade')->comment('شناسه کالا');
             $table->decimal('quantity', 10, 2)->default(1)->comment('تعداد');
             $table->decimal('coefficient', 10, 4)->default(1)->comment('ضریب');
-            $table->string('unit', 50)->nullable()->comment('واحد');
+            $table->foreignId('unit_id')->nullable()->constrained('units')->nullOnDelete()->comment('واحد');
             $table->text('notes')->nullable()->comment('یادداشت');
             $table->timestamps();
 
             $table->foreign('product_set_id')->references('id')->on('product_sets')->onDelete('cascade');
-            $table->foreign('product_profile_id')->references('id')->on('product_profiles')->onDelete('cascade');
         });
     }
 

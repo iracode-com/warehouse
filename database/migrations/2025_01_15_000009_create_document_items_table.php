@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete()->comment('شناسه سند');
 
             // قلم کالا
-            $table->foreignId('item_id')->constrained('items')->restrictOnDelete()->comment('شناسه قلم کالا');
+            $table->foreignId('product_profile_id')->constrained('product_profiles')->restrictOnDelete()->comment('شناسه شناسنامه کالا');
 
             // مقادیر
             $table->decimal('quantity', 15, 3)->comment('تعداد/مقدار');
@@ -56,7 +56,7 @@ return new class extends Migration
 
             // Indexes
             $table->index('document_id');
-            $table->index('item_id');
+            // $table->index('item_id');
         });
     }
 

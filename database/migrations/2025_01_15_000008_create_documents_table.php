@@ -32,6 +32,12 @@ return new class extends Migration
             $table->text('party_address')->nullable()->comment('آدرس طرف حساب');
             $table->string('party_phone')->nullable()->comment('تلفن طرف حساب');
 
+            // فیلدهای تحویل گیرنده برای خروج کالا
+            $table->string('delivery_first_name')->nullable()->comment('نام تحویل گیرنده');
+            $table->string('delivery_last_name')->nullable()->comment('نام خانوادگی تحویل گیرنده');
+            $table->string('delivery_mobile')->nullable()->comment('موبایل تحویل گیرنده');
+            $table->string('delivery_receipt_image')->nullable()->comment('تصویر رسید تحویل');
+
             // مرجع و مستندات
             $table->string('reference_number')->nullable()->comment('شماره مرجع/سفارش');
             $table->string('invoice_number')->nullable()->comment('شماره فاکتور');

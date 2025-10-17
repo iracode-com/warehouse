@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment('نام');
             $table->string('family')->comment('نام خانوادگی');
+            $table->string('full_name')->nullable()->comment('نام کامل');
             $table->string('fathername')->nullable()->comment('نام پدر');
             $table->enum('gender', ['male', 'female'])->comment('جنسیت');
             $table->enum('marital_status', ['single', 'married', 'divorced', 'widowed'])->comment('وضعیت تاهل');
