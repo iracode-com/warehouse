@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('full_path')->nullable()->comment('مسیر کامل در سلسله‌مراتب');
             $table->integer('children_count')->default(0)->comment('تعداد زیردسته‌ها');
             $table->integer('items_count')->default(0)->comment('تعداد کالاهای این دسته');
+            $table->string('category_type')->nullable()->comment('نوع دسته‌بندی');
             $table->timestamps();
 
             // Foreign key constraints

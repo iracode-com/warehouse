@@ -26,6 +26,8 @@ return new class extends Migration
             // Basic warehouse information
             $table->string('title'); // عنوان انبار
             $table->string('telephone')->nullable(); // تلفن
+            $table->string('manager_name')->nullable(); // نام مدیر
+            $table->string('manager_phone')->nullable(); // تلفن مدیر
             
             // Warehouse usage type
             $table->enum('usage_type', [
