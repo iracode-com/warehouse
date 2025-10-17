@@ -225,7 +225,14 @@ class WarehouseResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('personnel')
                             ->label('انبارداران')
-                            ->relationship('personnel', 'full_name')
+                            ->options(function () {
+                                $personnels = \App\Models\Personnel::all()->pluck('full_name', 'id')->toArray();
+                                $personnels_array = [];
+                                foreach ($personnels as $personnel) {
+                                    $personnels_array[$personnel['id']] = $personnel['name'] . ' ' . $personnel['family'];
+                                }
+                                return $personnels_array;
+                            })
                             ->multiple()
                             ->searchable(['name', 'family', 'personnel_code'])
                             ->preload()
