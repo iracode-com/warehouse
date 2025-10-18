@@ -74,7 +74,6 @@ class Base extends Model
     ];
 
     protected $casts = [
-        'name' => 'array',
         'city_border' => 'array',
         'type_operational_center' => 'integer',
         'account_type' => 'integer',
@@ -128,9 +127,9 @@ class Base extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        if (is_array($this->name) && isset($this->name['fa'])) {
-            return $this->name['fa'];
-        }
+        // if (is_array($this->name) && isset($this->name['fa'])) {
+        //     return $this->name['fa'];
+        // }
 
         return $this->name ?? '';
     }

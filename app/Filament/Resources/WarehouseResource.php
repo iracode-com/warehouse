@@ -105,6 +105,7 @@ class WarehouseResource extends Resource
 
                                 Forms\Components\TextInput::make('shed_number')
                                     ->label('شماره سوله انبار')
+                                    ->required()
                                     ->numeric(),
 
                             ]),
@@ -388,7 +389,7 @@ class WarehouseResource extends Resource
                                     ->label(__('warehouse.base'))
                                     ->relationship('base', 'name')
                                     ->getOptionLabelFromRecordUsing(fn($record) => $record->display_name)
-                                    ->searchable(['name->fa', 'name->en', 'coding'])
+                                    ->searchable()
                                     ->required()
                                     ->preload(),
 
