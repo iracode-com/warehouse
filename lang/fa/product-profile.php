@@ -38,6 +38,8 @@ return [
         'descriptions_desc' => 'یادداشت‌ها و توضیحات اضافی',
         'codes_barcodes' => 'کدها و بارکدها',
         'codes_barcodes_desc' => 'نمایش بارکد و کد QR کالا',
+        'images' => 'تصاویر کالا',
+        'images_desc' => 'گالری تصاویر و عکس‌های کالا',
     ],
 
     // Form fields

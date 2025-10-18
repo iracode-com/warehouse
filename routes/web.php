@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Milon\Barcode\Facades\DNS2DFacade;
 
 Route::get('/', function () {
     return redirect()->route('filament.admin.auth.login');

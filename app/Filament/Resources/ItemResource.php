@@ -72,7 +72,7 @@ class ItemResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->getOptionLabelFromRecordUsing(fn (ProductProfile $record): string => "{$record->name} ({$record->sku})")
+                            ->getOptionLabelFromRecordUsing(fn(ProductProfile $record): string => "{$record->name} ({$record->sku})")
                             ->helperText(__('item.fields.product_profile_id_helper')),
                     ]),
 
@@ -89,6 +89,15 @@ class ItemResource extends Resource
                                     ->maxLength(255)
                                     ->required()
                                     ->unique(ignoreRecord: true)
+                                    ->live()
+                                    ->afterStateUpdated(function ($set, $state) {
+                                        if ($state) {
+                                            $barcode = Item::generateBarcode($state);
+                                            $qrCode = Item::generateQRCode($state);
+                                            $set('barcode', $barcode);
+                                            $set('qr_code', $qrCode);
+                                        }
+                                    })
                                     ->helperText(__('item.fields.serial_number_helper'))
                                     ->columnSpan(1),
 
@@ -96,16 +105,20 @@ class ItemResource extends Resource
                                     ->label('بارکد')
                                     ->maxLength(255)
                                     ->unique(ignoreRecord: true)
+                                    ->disabled()
+                                    ->dehydrated()
                                     ->prefixIcon('heroicon-o-qr-code')
-                                    ->helperText('بارکد منحصر به فرد کالا')
+                                    ->helperText('بارکد خودکار بر اساس شماره سریال')
                                     ->columnSpan(1),
 
                                 Forms\Components\TextInput::make('qr_code')
                                     ->label('QR Code')
                                     ->maxLength(255)
                                     ->unique(ignoreRecord: true)
+                                    ->disabled()
+                                    ->dehydrated()
                                     ->prefixIcon('heroicon-o-qr-code')
-                                    ->helperText('QR Code منحصر به فرد کالا')
+                                    ->helperText('QR Code خودکار بر اساس شماره سریال')
                                     ->columnSpan(1),
                             ]),
 
@@ -123,7 +136,8 @@ class ItemResource extends Resource
                 Forms\Components\Select::make('source_document_id')
                     ->label('سند مبدا')
                     ->relationship('sourceDocument', 'document_number')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->document_number.' - '.$record->getTypeLabelAttribute().' ('.$record->document_date->format('Y/m/d').')'
+                    ->getOptionLabelFromRecordUsing(
+                        fn($record) => $record->document_number . ' - ' . $record->getTypeLabelAttribute() . ' (' . $record->document_date->format('Y/m/d') . ')'
                     )
                     ->searchable(['document_number'])
                     ->preload()
@@ -280,31 +294,33 @@ class ItemResource extends Resource
                     ->label(__('item.fields.product_profile_id'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn (Item $record): string => $record->productProfile?->brand ? "برند: {$record->productProfile->brand}" : ''),
+                    ->description(fn(Item $record): string => $record->productProfile?->brand ? "برند: {$record->productProfile->brand}" : ''),
 
                 Tables\Columns\TextColumn::make('serial_number')
                     ->label(__('item.table.serial_number'))
                     ->searchable()
                     ->toggleable(),
 
-                Tables\Columns\ViewColumn::make('barcode')
-                    ->label('بارکد')
-                    ->view('filament.tables.columns.barcode')
-                    ->toggleable()
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('barcode_image')
+                    ->label(__('product-profile.fields.barcode'))
+                    ->getStateUsing(fn($record) => $record->barcode_image)
+                    ->size(100)
+                    ->height(40)
+                    ->toggleable(),
 
-                Tables\Columns\ViewColumn::make('qr_code')
+                Tables\Columns\ImageColumn::make('qr_code_image')
                     ->label('QR Code')
-                    ->view('filament.tables.columns.qr-code')
-                    ->toggleable()
-                    ->searchable(),
+                    ->getStateUsing(fn($record) => $record->qr_code_image)
+                    ->size(60)
+                    ->height(60)
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('current_stock')
                     ->label(__('item.table.current_stock'))
                     ->numeric()
                     ->sortable()
                     ->badge()
-                    ->color(fn (Item $record): string => $record->stock_status_color),
+                    ->color(fn(Item $record): string => $record->stock_status_color),
 
                 Tables\Columns\TextColumn::make('unit_cost')
                     ->label(__('item.table.unit_cost'))
@@ -329,7 +345,7 @@ class ItemResource extends Resource
                         return $record->status_label;
                     })
                     ->badge()
-                    ->color(fn (Item $record): string => $record->status_color),
+                    ->color(fn(Item $record): string => $record->status_color),
 
                 Tables\Columns\IconColumn::make('is_active')
                     ->label(__('item.table.is_active'))
@@ -367,6 +383,9 @@ class ItemResource extends Resource
                     ->native(false),
             ])
             ->actions([
+                \Filament\Actions\ViewAction::make()
+                    ->label('مشاهده')
+                    ->icon('heroicon-o-eye'),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
@@ -382,6 +401,7 @@ class ItemResource extends Resource
         return [
             'index' => Pages\ListItems::route('/'),
             'create' => Pages\CreateItem::route('/create'),
+            'view' => Pages\ViewItem::route('/{record}'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }

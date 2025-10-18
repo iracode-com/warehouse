@@ -17,7 +17,7 @@ use Filament\Forms\Components\TextInput;
 
 class Login extends BaseLogin
 {
-    use HasCustomLayout;
+    // use HasCustomLayout;
 
     public string $captchaToken;
 

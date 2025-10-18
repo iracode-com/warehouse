@@ -277,6 +277,27 @@ class ViewProductProfile extends ViewRecord
                     ])
                     ->collapsible(),
 
+                // Section::make(__('product-profile.sections.images'))
+                //     ->description(__('product-profile.sections.images_desc'))
+                //     ->icon('heroicon-o-photo')
+                //     ->iconColor('secondary')
+                //     ->schema([
+                //         ViewEntry::make('images_gallery')
+                //             ->label(__('product-profile.fields.images'))
+                //             ->view('filament.components.image-gallery')
+                //             ->getStateUsing(function ($record) {
+                //                 if (empty($record->images)) {
+                //                     return [];
+                //                 }
+                                
+                //                 $images = is_array($record->images) ? $record->images : [];
+                //                 return $images;
+                //             })
+                //             ->visible(fn ($record) => !empty($record->images))
+                //             ->columnSpanFull(),
+                //     ])
+                //     ->collapsible(),
+
                 Section::make(__('product-profile.sections.status_settings'))
                     ->description(__('product-profile.sections.status_settings_desc'))
                     ->icon('heroicon-o-cog-6-tooth')

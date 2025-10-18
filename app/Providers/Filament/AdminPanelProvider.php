@@ -114,10 +114,10 @@ class AdminPanelProvider extends PanelProvider
                 FilamentShieldPlugin::make()
                     ->navigationIcon('')
                     ->activeNavigationIcon(''),
-                AuthUIEnhancerPlugin::make()
-                    ->formPanelPosition('left')
-                    ->formPanelWidth('60%')
-                    ->emptyPanelBackgroundImageUrl(asset('images/login.jpg')),
+                // AuthUIEnhancerPlugin::make()
+                //     ->formPanelPosition('left')
+                //     ->formPanelWidth('60%')
+                //     ->emptyPanelBackgroundImageUrl(asset('images/login.jpg')),
             ]);
     }
 

@@ -6,10 +6,12 @@ use App\Models\Location\Pallet;
 use App\Models\Location\Rack;
 use App\Models\Location\ShelfLevel;
 use App\Models\Location\Zone;
+use chillerlan\QRCode\QRCode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Milon\Barcode\Facades\DNS1DFacade;
 
 class Item extends Model
 {
@@ -121,6 +123,58 @@ class Item extends Model
         };
     }
 
+    /**
+     * Generate unique barcode for item
+     */
+    public static function generateBarcode(string $serialNumber): string
+    {
+        // تولید بارکد بر اساس شماره سریال
+        return '3' . str_pad($serialNumber, 12, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Generate unique QR code for item
+     */
+    public static function generateQRCode(string $serialNumber): string
+    {
+        // تولید QR Code بر اساس شماره سریال
+        return 'ITEM-' . $serialNumber . '-' . date('Ymd');
+    }
+
+    /**
+     * Get barcode image
+     */
+    public function getBarcodeImageAttribute(): ?string
+    {
+        if (empty($this->barcode)) {
+            return null;
+        }
+
+        try {
+            $barcode = DNS1DFacade::getBarcodeJPG($this->barcode, 'C39+', 3, 40, array(0, 0, 0), true);
+            return 'data:image/jpg;base64,' . $barcode;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get QR code image
+     */
+    public function getQrCodeImageAttribute(): ?string
+    {
+        if (empty($this->qr_code)) {
+            return null;
+        }
+
+        try {
+            $qrCode = new QRCode();
+            return $qrCode->render($this->qr_code);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function getIsExpiredAttribute(): bool
     {
         return $this->expiry_date && $this->expiry_date < now();
@@ -172,11 +226,6 @@ class Item extends Model
     public function getModelAttribute(): ?string
     {
         return $this->productProfile?->model;
-    }
-
-    public function getBarcodeAttribute(): ?string
-    {
-        return $this->productProfile?->barcode;
     }
 
     // Static methods for options
